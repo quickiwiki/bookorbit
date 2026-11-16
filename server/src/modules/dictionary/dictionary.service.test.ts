@@ -269,6 +269,24 @@ describe('helpers', () => {
     expect(rankCards(cards, ['running', 'runn'], 'en').map((c) => c.headword)).toEqual(['Running', 'rin', 'run', 'runn']);
   });
 
+  it('prefers the card spelled like the looked-up word, then the lowercase one', () => {
+    const cards = [
+      { headword: 'Stick', rank: 0 },
+      { headword: 'stick', rank: 0 },
+    ];
+    expect(rankCards(cards, ['stick'], 'en', 'stick').map((c) => c.headword)).toEqual(['stick', 'Stick']);
+    expect(rankCards(cards, ['stick'], 'en', 'Stick').map((c) => c.headword)).toEqual(['Stick', 'stick']);
+    expect(rankCards(cards, ['stick'], null).map((c) => c.headword)).toEqual(['stick', 'Stick']);
+  });
+
+  it('reads a word in capitals as the ordinary word, not an abbreviation', () => {
+    const cards = [
+      { headword: 'ASK', rank: 0 },
+      { headword: 'ask', rank: 0 },
+    ];
+    expect(rankCards(cards, ['ask'], 'en', 'ASK').map((c) => c.headword)).toEqual(['ask', 'ASK']);
+  });
+
   it('keeps at most five cards', () => {
     const cards = Array.from({ length: 8 }, (_, i) => ({ headword: `w${i}`, rank: 0 }));
     expect(rankCards(cards, ['x'], 'en')).toHaveLength(5);

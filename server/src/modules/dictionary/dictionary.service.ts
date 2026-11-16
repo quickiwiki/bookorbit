@@ -79,11 +79,16 @@ export function lookupCandidates(word: string, lang: string | null = null): stri
  * "rin"). A card titled with the looked-up word itself is the most direct answer, so it goes
  * first; the rest keep candidate order, then file order.
  */
-export function rankCards<T extends { headword: string; rank: number }>(cards: T[], candidates: string[], lang: string | null): T[] {
+export function rankCards<T extends { headword: string; rank: number }>(cards: T[], candidates: string[], lang: string | null, word = ''): T[] {
   const titled = (card: T) => (dictionaryKey(card.headword, lang) === candidates[card.rank] ? 0 : 1);
+  const shouted = word.length > 1 && word === word.toLocaleUpperCase() && word !== word.toLocaleLowerCase();
+  const spelled = (card: T) => {
+    if (!shouted && card.headword === word) return 0;
+    return card.headword === card.headword.toLocaleLowerCase() ? 1 : 2;
+  };
   return cards
-    .map((card, order) => ({ card, order, titled: titled(card) }))
-    .sort((a, b) => a.card.rank - b.card.rank || a.titled - b.titled || a.order - b.order)
+    .map((card, order) => ({ card, order, titled: titled(card), spelled: spelled(card) }))
+    .sort((a, b) => a.card.rank - b.card.rank || a.titled - b.titled || a.spelled - b.spelled || a.order - b.order)
     .slice(0, MAX_CARDS_PER_SOURCE)
     .map((x) => x.card);
 }
@@ -282,7 +287,7 @@ export class DictionaryService implements OnApplicationBootstrap {
     try {
       if (source.kind !== 'oxford') {
         const candidates = lookupCandidates(word, source.sourceLang);
-        const rows = rankCards(await this.repository.findEntries(source.id, candidates), candidates, source.sourceLang);
+        const rows = rankCards(await this.repository.findEntries(source.id, candidates), candidates, source.sourceLang, word.trim());
         if (rows.length === 0) return null;
         const render = source.kind === 'dsl' ? renderDslBody : renderTabfileBody;
         const entries = rows.flatMap((row) => render(row.headword, row.body));

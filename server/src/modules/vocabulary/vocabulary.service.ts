@@ -1,5 +1,11 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import type { CreateVocabularyWordResponse, VocabularyList, VocabularyWord, VocabularyWordPage } from '@bookorbit/types';
+import {
+  normalizeLanguage,
+  type CreateVocabularyWordResponse,
+  type VocabularyList,
+  type VocabularyWord,
+  type VocabularyWordPage,
+} from '@bookorbit/types';
 
 import type { RequestUser } from '../../common/types/request-user';
 import { cleanWord, normalizeWord } from '../../common/utils/normalize-word';
@@ -11,10 +17,10 @@ import { VocabularyRepository } from './vocabulary.repository';
 export const DEFAULT_VOCABULARY_LIST_NAME = 'My words';
 const DEFAULT_PAGE_SIZE = 50;
 
-/** `en-US` and `EN` both mean `en`; anything that is not a language code is dropped. */
+/** `en-US`, `EN` and `eng` all mean `en`; anything that is not a language code is dropped. */
 function primaryLanguage(lang: string | null | undefined): string | null {
   const primary = lang?.trim().toLowerCase().split(/[-_]/)[0];
-  return primary && /^[a-z]{2,3}$/.test(primary) ? primary : null;
+  return primary && /^[a-z]{2,3}$/.test(primary) ? normalizeLanguage(primary) : null;
 }
 
 function blankToNull(value: string | null | undefined): string | null {

@@ -101,6 +101,12 @@ describe('VocabularyService', () => {
       expect(result).toMatchObject({ created: true, listName: DEFAULT_VOCABULARY_LIST_NAME, word: { id: 11 } });
     });
 
+    it('saves three-letter book languages as the two-letter code', async () => {
+      repo.insertWord.mockImplementation((data) => Promise.resolve(word(data)));
+      await service.addWord(user, { word: 'stick', language: 'eng' });
+      expect(repo.insertWord).toHaveBeenCalledWith(expect.objectContaining({ language: 'en' }));
+    });
+
     it('drops location fields when no book is given', async () => {
       repo.insertWord.mockImplementation((data) => Promise.resolve(word(data)));
       await service.addWord(user, { word: 'x', bookFileId: 9, cfi: 'epubcfi(/6/4)', pageno: 3 });
