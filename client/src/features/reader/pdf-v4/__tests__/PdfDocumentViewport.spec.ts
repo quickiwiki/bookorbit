@@ -38,6 +38,7 @@ describe('PdfDocumentViewport', () => {
           RenderLayer: layerStub('render'),
           TilingLayer: layerStub('tiling'),
           SearchLayer: layerStub('search'),
+          PdfVocabularyMarks: layerStub('vocabulary-marks'),
           SelectionLayer: layerStub('selection'),
           AnnotationLayer: layerStub('annotation'),
         },
@@ -50,5 +51,6 @@ describe('PdfDocumentViewport', () => {
     expect(pointer.get('[data-testid="render"]').attributes('scale')).toBe('0.5')
     expect(pointer.find('[data-testid="tiling"]').exists()).toBe(true)
     expect(pointer.get('[data-testid="search"]').attributes('highlight-color')).toContain('var(--primary)')
+    expect(pointer.get('[data-testid="vocabulary-marks"]').attributes('page-index')).toBe('3')
   })
 })

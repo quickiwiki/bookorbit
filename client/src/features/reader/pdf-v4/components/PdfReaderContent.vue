@@ -183,11 +183,13 @@ function handleHighlightCancelNote() {
 const vocabulary = useSaveVocabularyWord()
 
 const wordsTabOpen = computed(() => sidebar.open.value && sidebar.activeTab.value === 'words')
-const { text: pageText, readPage: readPageText } = usePdfPageText(
-  () => props.documentId,
-  () => scrollState.value.currentPage,
-  wordsTabOpen,
-)
+/** The pages being read: both pages of a two-page spread, or just the one page. */
+const readingPages = computed(() => {
+  const { start, end } = pageRange.value
+  if (start < 1) return []
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i)
+})
+const { text: pageText, readPage: readPageText } = usePdfPageText(() => props.documentId, readingPages, wordsTabOpen)
 const pageBookInfo = ref<{ title: string | null; language: string | null }>({ title: null, language: null })
 const wordsSaveContext = computed(() => ({
   bookId: props.bookId,

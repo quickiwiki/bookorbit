@@ -9,6 +9,7 @@ import { SelectionLayer } from '@embedpdf/plugin-selection/vue'
 import { TilingLayer } from '@embedpdf/plugin-tiling/vue'
 import { Viewport } from '@embedpdf/plugin-viewport/vue'
 import { ZoomGestureWrapper } from '@embedpdf/plugin-zoom/vue'
+import PdfVocabularyMarks from './PdfVocabularyMarks.vue'
 
 defineProps<{ documentId: string }>()
 </script>
@@ -29,6 +30,7 @@ defineProps<{ documentId: string }>()
                   highlight-color="color-mix(in oklch, var(--primary) 30%, transparent)"
                   active-highlight-color="color-mix(in oklch, var(--primary) 55%, transparent)"
                 />
+                <PdfVocabularyMarks :document-id="documentId" :page-index="page.pageIndex" />
                 <SelectionLayer
                   :document-id="documentId"
                   :page-index="page.pageIndex"

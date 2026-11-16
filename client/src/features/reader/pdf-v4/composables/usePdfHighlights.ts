@@ -107,8 +107,7 @@ export function usePdfHighlights({ bookId, fileId, documentId, getSurface, getPo
   function currentSlices(): SelectionSlice[] {
     const state = selScope()?.getState?.()
     const selection = state?.selection
-    if (!state || !selection)
-      return []
+    if (!state || !selection) return []
     const slices: SelectionSlice[] = []
     for (let page = selection.start.page; page <= selection.end.page; page++) {
       const slice = state.slices[page]
