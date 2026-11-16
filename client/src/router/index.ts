@@ -286,6 +286,12 @@ export const routes: RouteRecordRaw[] = [
             meta: { maxWidth: 'max-w-[82rem]', title: () => t('titles.reader.fonts') },
           },
           {
+            path: 'reader/dictionaries',
+            name: 'settings-reader-dictionaries',
+            component: () => import('@/features/settings/DictionariesSettings.vue'),
+            meta: { title: () => t('titles.reader.dictionaries') },
+          },
+          {
             path: 'reader/general',
             name: 'settings-reader-general',
             component: () => import('@/features/settings/ReaderSettings.vue'),
@@ -578,6 +584,12 @@ export const routes: RouteRecordRaw[] = [
         name: 'whats-new',
         component: () => import('@/features/whats-new/WhatsNewView.vue'),
         meta: { titleRow: true, title: () => t('titles.whatsNew') },
+      },
+      {
+        path: '/vocabulary',
+        name: 'vocabulary',
+        component: () => import('@/features/vocabulary/views/VocabularyView.vue'),
+        meta: { titleRow: true, title: () => t('titles.vocabulary') },
       },
       {
         path: '/annotations',

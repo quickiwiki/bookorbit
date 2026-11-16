@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, useId, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { BookOpen, FileText, Highlighter, Search, X } from '@lucide/vue'
+import { BookOpen, FileText, Highlighter, Languages, Search, X } from '@lucide/vue'
 import { useAnnotationCapability } from '@embedpdf/plugin-annotation/vue'
 import { useBookmarkCapability } from '@embedpdf/plugin-bookmark/vue'
 import { useScroll } from '@embedpdf/plugin-scroll/vue'
@@ -17,6 +17,7 @@ import {
   type PdfSidebarLayout,
   type PdfSidebarTab,
 } from '../composables/usePdfSidebarLayout'
+import type { PageWordsSaveContext } from '@/features/vocabulary/lib/page-words'
 
 const props = withDefaults(
   defineProps<{
@@ -30,8 +31,11 @@ const props = withDefaults(
     loading?: boolean
     loadingMore?: boolean
     hasMore?: boolean
+    pageText?: string
+    bookLanguage?: string | null
+    wordsSaveContext?: PageWordsSaveContext | null
   }>(),
-  { open: true, layout: 'dock', width: 304 },
+  { open: true, layout: 'dock', width: 304, pageText: '', bookLanguage: null, wordsSaveContext: null },
 )
 
 const emit = defineEmits<{
@@ -56,7 +60,7 @@ const bookmarks = ref<FlatPdfBookmark[]>([])
 const bookmarksLoading = ref(false)
 const bookmarksLoaded = ref(false)
 
-const TAB_ICONS = { thumbnails: FileText, contents: BookOpen, search: Search, highlights: Highlighter } as const
+const TAB_ICONS = { thumbnails: FileText, contents: BookOpen, search: Search, highlights: Highlighter, words: Languages } as const
 
 const tabIds = computed(() => Object.fromEntries(PDF_SIDEBAR_TABS.map((tab) => [tab, `${sidebarId}-tab-${tab}`])) as Record<PdfSidebarTab, string>)
 const panelIds = computed(
@@ -68,6 +72,7 @@ const TAB_LABEL_KEYS = {
   contents: 'reader.pdf.sidebar.contents',
   search: 'reader.pdf.sidebar.search',
   highlights: 'reader.sidebar.tabs.notesShort',
+  words: 'vocabulary.pageWords.tab',
 } as const
 
 function tabLabel(tab: PdfSidebarTab) {
@@ -245,6 +250,9 @@ function handleResizeKeydown(event: KeyboardEvent) {
         :loading="props.loading"
         :loading-more="props.loadingMore"
         :has-more="props.hasMore"
+        :page-text="props.pageText"
+        :book-language="props.bookLanguage"
+        :words-save-context="props.wordsSaveContext"
         @select-page="handleThumbnail"
         @navigate-bookmark="handleBookmark"
         @navigate-highlight="handleNavigateHighlight"
@@ -328,6 +336,9 @@ function handleResizeKeydown(event: KeyboardEvent) {
         :loading="props.loading"
         :loading-more="props.loadingMore"
         :has-more="props.hasMore"
+        :page-text="props.pageText"
+        :book-language="props.bookLanguage"
+        :words-save-context="props.wordsSaveContext"
         @select-page="handleThumbnail"
         @navigate-bookmark="handleBookmark"
         @navigate-highlight="handleNavigateHighlight"

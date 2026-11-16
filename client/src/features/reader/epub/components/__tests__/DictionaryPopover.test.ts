@@ -7,6 +7,12 @@ import type { DictionaryResult } from '@bookorbit/types'
 const mockLookup = vi.fn<() => Promise<DictionaryResult | null>>()
 vi.mock('../../composables/useDictionary', () => ({
   useDictionary: () => ({ lookup: mockLookup }),
+  normalizeLang: (lang: string) => lang,
+}))
+
+const mockExternalLookup = vi.fn().mockResolvedValue([])
+vi.mock('@/features/vocabulary/composables/vocabularyApi', () => ({
+  dictionaryApi: { lookup: (...args: unknown[]) => mockExternalLookup(...args) },
 }))
 
 // Mock Audio globally
@@ -157,7 +163,7 @@ describe('DictionaryPopover', () => {
     mockLookup.mockResolvedValue(makeResult({ audioUrl: null }))
     const wrapper = await mountPopover()
     await flushPromises()
-    expect(wrapper.find('button').exists()).toBe(false)
+    expect(wrapper.find('button:not([data-testid="dictionary-save-word"])').exists()).toBe(false)
   })
 
   it('groups definitions by part of speech', async () => {
@@ -389,5 +395,50 @@ describe('DictionaryPopover', () => {
     await mountPopover({ word: 'ephemeral', lang: 'fr' })
     await flushPromises()
     expect(mockLookup).toHaveBeenCalledWith('ephemeral', 'fr')
+  })
+
+  describe('user dictionaries and saving', () => {
+    it('shows user dictionary results first with a chip per source', async () => {
+      mockLookup.mockResolvedValue(makeResult())
+      mockExternalLookup.mockResolvedValueOnce([
+        {
+          sourceId: 4,
+          sourceName: 'Lingvo En-Ru',
+          provider: 'dsl',
+          word: 'hello',
+          phonetic: null,
+          audioUrl: null,
+          entries: [{ partOfSpeech: 'interj', definitions: [{ definition: 'привет', example: null }], sourceWord: 'hello' }],
+        },
+      ])
+      const wrapper = await mountPopover()
+      await flushPromises()
+
+      const chips = wrapper.findAll('[role="tab"]')
+      expect(chips.map((c) => c.text())).toEqual(['Lingvo En-Ru', 'Free Dictionary'])
+      expect(wrapper.text()).toContain('привет')
+
+      await chips[1]!.trigger('click')
+      expect(wrapper.text()).toContain('An expression of greeting.')
+      expect(wrapper.text()).not.toContain('привет')
+    })
+
+    it('emits the active source meaning, several senses deep, when saving', async () => {
+      mockLookup.mockResolvedValue(makeResult())
+      const wrapper = await mountPopover()
+      await flushPromises()
+
+      await wrapper.find('[data-testid="dictionary-save-word"]').trigger('click')
+      expect(wrapper.emitted('saveWord')?.[0]?.[0]).toContain('(noun) An expression of greeting.; A call to attract attention.')
+      expect(wrapper.emitted('close')).toBeTruthy()
+    })
+
+    it('still renders built-in results when the user dictionary lookup fails', async () => {
+      mockLookup.mockResolvedValue(makeResult())
+      mockExternalLookup.mockRejectedValueOnce(new Error('offline'))
+      const wrapper = await mountPopover()
+      await flushPromises()
+      expect(wrapper.text()).toContain('An expression of greeting.')
+    })
   })
 })

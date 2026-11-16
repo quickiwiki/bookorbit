@@ -4,6 +4,8 @@ import PdfNotesPanel from './PdfNotesPanel.vue'
 import PdfOutlineTree from './PdfOutlineTree.vue'
 import PdfSearchPanel from './PdfSearchPanel.vue'
 import PdfThumbnailGrid from './PdfThumbnailGrid.vue'
+import PageWordsPanel from '@/features/vocabulary/components/PageWordsPanel.vue'
+import type { PageWordsSaveContext } from '@/features/vocabulary/lib/page-words'
 import type { FlatPdfBookmark } from '../pdf-viewer-utils'
 import type { PdfSidebarTab } from '../composables/usePdfSidebarLayout'
 
@@ -20,6 +22,9 @@ defineProps<{
   loading?: boolean
   loadingMore?: boolean
   hasMore?: boolean
+  pageText?: string
+  bookLanguage?: string | null
+  wordsSaveContext?: PageWordsSaveContext | null
 }>()
 
 const emit = defineEmits<{
@@ -72,6 +77,9 @@ function handleLoadMoreHighlights() {
     @navigate="handleNavigateBookmark"
   />
   <PdfSearchPanel v-else-if="activeTab === 'search'" :document-id="documentId" :active="active" />
+  <div v-else-if="activeTab === 'words'" class="flex min-h-0 flex-1 flex-col pt-3">
+    <PageWordsPanel v-if="wordsSaveContext" :text="pageText ?? ''" :language="bookLanguage ?? null" :saveContext="wordsSaveContext" />
+  </div>
   <PdfNotesPanel
     v-else
     :annotations="annotations"

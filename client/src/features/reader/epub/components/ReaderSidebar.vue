@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Bookmark, BookOpen, Highlighter, Pencil, Pin, PinOff, Trash2, TriangleAlert, X } from '@lucide/vue'
+import { Bookmark, BookOpen, Highlighter, Languages, Pencil, Pin, PinOff, Trash2, TriangleAlert, X } from '@lucide/vue'
 import { ANNOTATION_COLOR_FILTER_OPTIONS } from '@bookorbit/types'
 import type { TocItem } from '../composables/useToc'
 import type { Bookmark as BookmarkType } from '../composables/useBookmarks'
@@ -9,6 +9,8 @@ import type { Annotation } from '../composables/useAnnotations'
 import { stripFragment, findNearestCfi, formatCfiLocation, formatDate, getCfiSortKey } from '../utils'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import BookmarkEditDialog from './BookmarkEditDialog.vue'
+import PageWordsPanel from '@/features/vocabulary/components/PageWordsPanel.vue'
+import type { PageWordsSaveContext } from '@/features/vocabulary/lib/page-words'
 
 const { t } = useI18n()
 
@@ -23,9 +25,16 @@ const props = withDefaults(
     expandedHrefs: Set<string>
     pinned: boolean
     navigationLocked?: boolean
+    /** Text on screen now, for the Words tab; the tab is hidden without a save context. */
+    pageText?: string
+    bookLanguage?: string | null
+    wordsSaveContext?: PageWordsSaveContext | null
   }>(),
   {
     navigationLocked: false,
+    pageText: '',
+    bookLanguage: null,
+    wordsSaveContext: null,
   },
 )
 
@@ -42,13 +51,16 @@ const emit = defineEmits<{
   togglePinned: []
 }>()
 
-type Tab = 'chapters' | 'bookmarks' | 'highlights'
+type Tab = 'chapters' | 'bookmarks' | 'highlights' | 'words'
 const tabOptions = computed(
   () =>
     [
       { id: 'chapters', icon: BookOpen, label: t('reader.sidebar.tabs.tocShort'), fullLabel: t('reader.sidebar.tabs.toc') },
       { id: 'bookmarks', icon: Bookmark, label: t('reader.sidebar.tabs.marksShort'), fullLabel: t('reader.sidebar.tabs.bookmarks') },
       { id: 'highlights', icon: Highlighter, label: t('reader.sidebar.tabs.notesShort'), fullLabel: t('reader.sidebar.tabs.highlights') },
+      ...(props.wordsSaveContext
+        ? [{ id: 'words', icon: Languages, label: t('vocabulary.pageWords.tab'), fullLabel: t('vocabulary.pageWords.title') } as const]
+        : []),
     ] as const,
 )
 const activeTab = ref<Tab>('chapters')
@@ -114,6 +126,7 @@ const activeRowSelectorByTab: Record<Tab, string> = {
   chapters: '[data-reader-active-row="chapter"]',
   bookmarks: '[data-reader-active-row="bookmark"]',
   highlights: '[data-reader-active-row="highlight"]',
+  words: '[data-reader-active-row="word"]',
 }
 
 async function scrollActiveSidebarRow() {
@@ -256,7 +269,7 @@ function togglePinned() {
       @click.stop
     >
       <div class="flex items-stretch border-b border-border shrink-0">
-        <div class="grid min-w-0 flex-1 grid-cols-3">
+        <div class="grid min-w-0 flex-1" :class="tabOptions.length > 3 ? 'grid-cols-4' : 'grid-cols-3'">
           <Tooltip v-for="tab in tabOptions" :key="tab.id">
             <TooltipTrigger as-child>
               <button
@@ -307,6 +320,10 @@ function togglePinned() {
       </div>
 
       <div ref="scrollContainer" class="flex-1 overflow-y-auto">
+        <div v-if="activeTab === 'words' && wordsSaveContext" class="pt-3">
+          <PageWordsPanel :text="pageText" :language="bookLanguage" :saveContext="wordsSaveContext" />
+        </div>
+
         <template v-if="activeTab === 'chapters'">
           <TocList
             :items="chapters"

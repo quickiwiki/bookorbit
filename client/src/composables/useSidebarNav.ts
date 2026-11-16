@@ -1,7 +1,7 @@
 import { computed, type Component } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, type RouteLocationNormalizedLoaded, type RouteLocationRaw } from 'vue-router'
-import { BarChart3, BookPlus, Highlighter, History, LayoutDashboard, Library, PackageOpen, Trophy, Users, Wrench } from '@lucide/vue'
+import { BarChart3, BookA, BookPlus, Highlighter, History, LayoutDashboard, Library, PackageOpen, Trophy, Users, Wrench } from '@lucide/vue'
 import { Permission, type BrowseCounts, type SidebarSectionId } from '@bookorbit/types'
 import { useAuth } from '@/features/auth/composables/useAuth'
 import { usePermissions } from '@/features/auth/composables/usePermissions'
@@ -191,6 +191,14 @@ export const SIDEBAR_NAV_REGISTRY: readonly SidebarNavEntry[] = [
     to: { name: 'annotations' },
     isActive: (route) => route.name === 'annotations',
     badge: browseBadge('annotations'),
+  },
+  {
+    id: 'vocabulary',
+    labelKey: 'components.sidebar.vocabulary',
+    icon: BookA,
+    zone: 'reading',
+    to: { name: 'vocabulary' },
+    isActive: (route) => route.name === 'vocabulary',
   },
 ]
 

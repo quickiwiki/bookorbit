@@ -42,6 +42,7 @@ export function usePdfHighlights({ bookId, fileId, documentId, getSurface, getPo
   const popupPosition = ref({ x: 0, y: 0 })
   const popupShowBelow = ref(false)
   const selectedText = ref('')
+  const selectionPageIndex = ref<number | null>(null)
   const overlappingAnnotationId = ref<number | null>(null)
   const showNoteDialog = ref(false)
   const noteText = ref('')
@@ -168,6 +169,7 @@ export function usePdfHighlights({ bookId, fileId, documentId, getSurface, getPo
     const captured = await captureSelection()
     if (generation !== selectionGeneration) return
     overlappingAnnotationId.value = overlapping
+    selectionPageIndex.value = placement.pageIndex
     pendingSelection = captured
     selectedText.value = captured
       .map((entry) => entry.text)
@@ -375,6 +377,7 @@ export function usePdfHighlights({ bookId, fileId, documentId, getSurface, getPo
     popupPosition,
     popupShowBelow,
     selectedText,
+    selectionPageIndex,
     overlappingAnnotationId,
     showNoteDialog,
     noteText,

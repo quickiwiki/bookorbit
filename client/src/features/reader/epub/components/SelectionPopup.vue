@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { BookA, Check, Copy, FileText, Headphones, Highlighter, Languages, Search, Trash2 } from '@lucide/vue'
+import { BookA, Check, Copy, FileText, Headphones, Highlighter, Languages, ListPlus, Search, Trash2 } from '@lucide/vue'
 import { ANNOTATION_HIGHLIGHT_COLORS } from '@bookorbit/types'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { copyToClipboard } from '@/lib/clipboard'
@@ -23,6 +23,7 @@ const emit = defineEmits<{
   search: []
   translate: []
   define: []
+  addWord: []
   note: []
   deleteAnnotation: [id: number]
   dismiss: []
@@ -152,6 +153,20 @@ async function onCopy() {
                 </button>
               </TooltipTrigger>
               <TooltipContent>{{ t('reader.selection.define') }}</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <button
+                  class="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                  :aria-label="t('reader.selection.addWord')"
+                  data-testid="selection-add-word"
+                  @click="emit('addWord')"
+                >
+                  <ListPlus :size="15" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>{{ t('reader.selection.addWord') }}</TooltipContent>
             </Tooltip>
 
             <Tooltip>

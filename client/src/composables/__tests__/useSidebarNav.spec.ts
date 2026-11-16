@@ -71,7 +71,7 @@ describe('sidebar nav registry', () => {
   })
 
   it('shows only ungated destinations to a user with no permissions', () => {
-    expect(allowedIds(makeContext())).toEqual(['dashboard', 'statistics', 'reading-history', 'achievements', 'authors', 'series', 'annotations'])
+    expect(allowedIds(makeContext())).toEqual(['dashboard', 'statistics', 'reading-history', 'achievements', 'authors', 'series', 'annotations', 'vocabulary'])
   })
 
   it('places Dashboard, Book Dock, Requests and Tools in the primary zone, above the entity sections', () => {
@@ -80,10 +80,10 @@ describe('sidebar nav registry', () => {
     expect(primary).toEqual(['dashboard', 'book-dock', 'book-requests', 'tools'])
   })
 
-  it('groups Statistics, History, Achievements and Annotations in the Reading zone', () => {
+  it('groups Statistics, History, Achievements, Annotations and Vocabulary in the Reading zone', () => {
     const reading = SIDEBAR_NAV_REGISTRY.filter((candidate) => candidate.zone === 'reading').map((candidate) => candidate.id)
 
-    expect(reading).toEqual(['statistics', 'reading-history', 'achievements', 'annotations'])
+    expect(reading).toEqual(['statistics', 'reading-history', 'achievements', 'annotations', 'vocabulary'])
   })
 
   it('hides Achievements when the user has turned achievements off', () => {
@@ -234,7 +234,7 @@ describe('sidebar nav registry', () => {
   it('leaves the browse rows unbadged before the counts load and while they are zero', () => {
     const zeroed = makeContext({ browseCounts: { authors: 0, series: 0, annotations: 0 } })
 
-    for (const id of ['authors', 'series', 'annotations']) {
+    for (const id of ['authors', 'series', 'annotations', 'vocabulary']) {
       expect(resolveNavEntry(entry(id), makeContext(), makeRoute('dashboard'), id).badge).toBeNull()
       expect(resolveNavEntry(entry(id), zeroed, makeRoute('dashboard'), id).badge).toBeNull()
     }

@@ -13,6 +13,11 @@ const mocks = vi.hoisted(() => ({
   scrollToPage: vi.fn<(options: { pageNumber: number; behavior?: ScrollBehavior }) => void>(),
 }))
 
+vi.mock('@embedpdf/core/vue', async () => {
+  const { computed, shallowRef } = await import('vue')
+  return { useRegistry: () => ({ registry: shallowRef(null) }), useDocumentState: () => computed(() => null) }
+})
+
 vi.mock('@embedpdf/plugin-scroll/vue', async () => {
   const { ScrollStrategy } = await import('@embedpdf/plugin-scroll')
   return {

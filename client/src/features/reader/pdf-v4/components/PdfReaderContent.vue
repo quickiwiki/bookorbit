@@ -24,9 +24,12 @@ import { usePdfHighlights } from '../composables/usePdfHighlights'
 import { usePdfInteractionMode } from '../composables/usePdfInteractionMode'
 import { usePdfPagination } from '../composables/usePdfPagination'
 import { usePdfResponsiveSpread } from '../composables/usePdfResponsiveSpread'
+import { usePdfPageText } from '../composables/usePdfPageText'
 import { usePdfSidebarLayout, type PdfSidebarTab } from '../composables/usePdfSidebarLayout'
 import NoteDialog from '../../shared/components/NoteDialog.vue'
 import PdfSelectionPopup from './PdfSelectionPopup.vue'
+import { vocabularyBookInfo } from '@/features/vocabulary/composables/bookInfo'
+import { useSaveVocabularyWord } from '@/features/vocabulary/composables/useSaveVocabularyWord'
 
 const props = defineProps<{
   documentId: string
@@ -172,6 +175,47 @@ function handleHighlightSaveNote(note: string) {
 
 function handleHighlightCancelNote() {
   highlights.cancelNoteDialog()
+}
+
+const vocabulary = useSaveVocabularyWord()
+
+const wordsTabOpen = computed(() => sidebar.open.value && sidebar.activeTab.value === 'words')
+const { text: pageText } = usePdfPageText(
+  () => props.documentId,
+  () => scrollState.value.currentPage,
+  wordsTabOpen,
+)
+const pageBookInfo = ref<{ title: string | null; language: string | null }>({ title: null, language: null })
+const wordsSaveContext = computed(() => ({
+  bookId: props.bookId,
+  bookFileId: props.fileId,
+  bookFormat: 'pdf',
+  bookTitle: pageBookInfo.value.title,
+  language: pageBookInfo.value.language,
+  pageno: scrollState.value.currentPage || null,
+}))
+watch(
+  () => props.bookId,
+  async (bookId) => {
+    pageBookInfo.value = await vocabularyBookInfo(bookId)
+  },
+  { immediate: true },
+)
+
+async function handleAddWord() {
+  const word = highlights.selectedText.value
+  const pageIndex = highlights.selectionPageIndex.value
+  highlights.dismissPopup()
+  const book = await vocabularyBookInfo(props.bookId)
+  await vocabulary.save({
+    word,
+    bookId: props.bookId,
+    bookFileId: props.fileId,
+    bookFormat: 'pdf',
+    bookTitle: book.title,
+    language: book.language,
+    pageno: pageIndex != null ? pageIndex + 1 : null,
+  })
 }
 
 function handleHighlightDismiss() {
@@ -483,6 +527,9 @@ onUnmounted(() => {
         :loading="highlights.loading.value"
         :loading-more="highlights.loadingMore.value"
         :has-more="highlights.hasMore.value"
+        :page-text="pageText"
+        :book-language="pageBookInfo.language"
+        :words-save-context="wordsSaveContext"
         @close="handleSidebarClose"
         @update:active-tab="handleSidebarTab"
         @update:width="handleSidebarWidth"
@@ -562,6 +609,7 @@ onUnmounted(() => {
           :disabled="highlights.isSaving.value"
           @highlight="handleHighlightAction"
           @note="handleHighlightNote"
+          @add-word="handleAddWord"
           @delete-annotation="handleDeleteHighlight"
           @dismiss="handleHighlightDismiss"
           @resize="handleSelectionPopupResize"

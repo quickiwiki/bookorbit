@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Check, Copy, FileText, Highlighter, Trash2 } from '@lucide/vue'
+import { Check, Copy, FileText, Highlighter, ListPlus, Trash2 } from '@lucide/vue'
 import { ANNOTATION_HIGHLIGHT_COLORS } from '@bookorbit/types'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { copyToClipboard } from '@/lib/clipboard'
@@ -21,6 +21,7 @@ const emit = defineEmits<{
   copy: []
   highlight: [color: string, style: string]
   note: []
+  addWord: []
   deleteAnnotation: [id: number]
   dismiss: []
   resize: []
@@ -49,6 +50,10 @@ watch(
   },
   { flush: 'post' },
 )
+
+function handleAddWord() {
+  emit('addWord')
+}
 
 function handleHighlightClick() {
   if (showColorPicker.value) {
@@ -139,6 +144,21 @@ async function handleCopy() {
             </button>
           </TooltipTrigger>
           <TooltipContent>{{ t('reader.selection.highlight') }}</TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <button
+              class="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              :aria-label="t('reader.selection.addWord')"
+              :disabled="props.disabled"
+              data-testid="pdf-selection-add-word"
+              @click="handleAddWord"
+            >
+              <ListPlus :size="15" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>{{ t('reader.selection.addWord') }}</TooltipContent>
         </Tooltip>
 
         <Tooltip>

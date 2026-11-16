@@ -1016,6 +1016,41 @@
       "when": 1794461433776,
       "tag": "0144_add_download_client_remove_completed",
       "breakpoints": true
+    },
+    {
+      "idx": 145,
+      "version": "7",
+      "when": 1794598383886,
+      "tag": "0145_vocabulary_and_dictionaries",
+      "breakpoints": true
+    },
+    {
+      "idx": 146,
+      "version": "7",
+      "when": 1794601765126,
+      "tag": "0146_dictionary_forms_and_tabfile",
+      "breakpoints": true
+    },
+    {
+      "idx": 147,
+      "version": "7",
+      "when": 1794604077213,
+      "tag": "0147_vocabulary_word_language",
+      "breakpoints": true
+    },
+    {
+      "idx": 148,
+      "version": "7",
+      "when": 1794821871122,
+      "tag": "0148_dictionary_sharing",
+      "breakpoints": true
+    },
+    {
+      "idx": 149,
+      "version": "7",
+      "when": 1794838582779,
+      "tag": "0149_vocabulary_word_sort_index",
+      "breakpoints": true
     }
   ]
 }

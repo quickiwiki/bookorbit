@@ -1,5 +1,6 @@
 import type { Component } from 'vue'
 import {
+  BookA,
   Activity,
   AudioLines,
   Bell,
@@ -203,6 +204,14 @@ export const SETTINGS_NAV: readonly SettingsNavGroup[] = [
             descriptionKey: 'settings.nav.descriptions.readerFonts',
             icon: Type,
             keywords: 'font typeface family upload reader',
+          },
+          {
+            id: 'reader-dictionaries',
+            routeName: 'settings-reader-dictionaries',
+            labelKey: 'settings.reader.tabs.dictionaries',
+            descriptionKey: 'settings.nav.descriptions.readerDictionaries',
+            icon: BookA,
+            keywords: 'dictionary dictionaries oxford lingvo abbyy dsl vocabulary define translate',
           },
           {
             id: 'reader-general',

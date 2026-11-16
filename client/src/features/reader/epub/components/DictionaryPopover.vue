@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Volume2, RefreshCw } from '@lucide/vue'
-import type { DictionaryEntry, DictionaryResult } from '@bookorbit/types'
-import { useDictionary } from '../composables/useDictionary'
+import { ListPlus, Volume2, RefreshCw } from '@lucide/vue'
+import type { DictionaryEntry } from '@bookorbit/types'
+import { dictionaryApi } from '@/features/vocabulary/composables/vocabularyApi'
+import { formatDefinition } from '@/features/vocabulary/lib/definition'
+import { normalizeLang, useDictionary } from '../composables/useDictionary'
 
 const { t } = useI18n()
 
@@ -15,12 +17,26 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   close: []
+  saveWord: [definition: string | null]
 }>()
 
 const { lookup } = useDictionary()
 
+interface SourceResult {
+  key: string
+  label: string
+  word: string
+  phonetic: string | null
+  audioUrl: string | null
+  entries: DictionaryEntry[]
+}
+
+const BUILT_IN_LABELS: Record<string, string> = { 'free-dictionary': 'Free Dictionary', wiktionary: 'Wiktionary' }
+
 const loading = ref(true)
-const result = ref<DictionaryResult | null>(null)
+const sources = ref<SourceResult[]>([])
+const activeKey = ref('')
+const result = computed(() => sources.value.find((s) => s.key === activeKey.value) ?? sources.value[0] ?? null)
 const notFound = ref(false)
 const hasError = ref(false)
 const popoverRef = ref<HTMLElement | null>(null)
@@ -87,20 +103,47 @@ async function fetchDefinition() {
   loading.value = true
   notFound.value = false
   hasError.value = false
-  result.value = null
+  sources.value = []
 
-  try {
-    const res = await lookup(props.word, props.lang)
-    if (res) {
-      result.value = res
-    } else {
-      notFound.value = true
+  const [builtIn, external] = await Promise.allSettled([lookup(props.word, props.lang), dictionaryApi.lookup(props.word, normalizeLang(props.lang))])
+
+  const found: SourceResult[] = []
+  if (external.status === 'fulfilled') {
+    for (const r of external.value) {
+      found.push({ key: `src-${r.sourceId}`, label: r.sourceName, word: r.word, phonetic: r.phonetic, audioUrl: r.audioUrl, entries: r.entries })
     }
-  } catch {
-    hasError.value = true
-  } finally {
-    loading.value = false
   }
+  if (builtIn.status === 'fulfilled' && builtIn.value) {
+    const r = builtIn.value
+    found.push({
+      key: r.provider,
+      label: BUILT_IN_LABELS[r.provider] ?? r.provider,
+      word: r.word,
+      phonetic: r.phonetic,
+      audioUrl: r.audioUrl,
+      entries: r.entries,
+    })
+  }
+
+  sources.value = found
+  activeKey.value = found[0]?.key ?? ''
+
+  if (found.length === 0) {
+    if (builtIn.status === 'rejected') hasError.value = true
+    else notFound.value = true
+  }
+  loading.value = false
+}
+
+function selectSource(key: string) {
+  activeKey.value = key
+}
+
+const savedDefinition = computed(() => (result.value ? formatDefinition(props.word, result.value.entries) : null))
+
+function handleSave() {
+  emit('saveWord', savedDefinition.value)
+  emit('close')
 }
 
 function handleRetry() {
@@ -136,7 +179,7 @@ watch(
   { immediate: true },
 )
 
-watch([loading, result, notFound, hasError], async () => {
+watch([loading, activeKey, notFound, hasError], async () => {
   await nextTick()
   updatePopoverPosition()
 })
@@ -172,6 +215,21 @@ watch([loading, result, notFound, hasError], async () => {
 
         <!-- Result -->
         <div v-else-if="result" class="p-3 space-y-2">
+          <div v-if="sources.length > 1" class="flex flex-wrap gap-1" role="tablist">
+            <button
+              v-for="source in sources"
+              :key="source.key"
+              role="tab"
+              :aria-selected="source.key === result.key"
+              class="px-2 py-0.5 rounded-full text-[11px] border transition-colors"
+              :class="
+                source.key === result.key ? 'bg-primary text-primary-foreground border-primary' : 'border-border text-muted-foreground hover:bg-muted'
+              "
+              @click="selectSource(source.key)"
+            >
+              {{ source.label }}
+            </button>
+          </div>
           <div class="flex items-center gap-2">
             <span class="text-sm font-semibold text-foreground leading-tight">{{ result.word }}</span>
             <span v-if="result.phonetic" class="text-xs text-muted-foreground italic">{{ result.phonetic }}</span>
@@ -197,6 +255,17 @@ watch([loading, result, notFound, hasError], async () => {
               </ul>
             </div>
           </div>
+        </div>
+
+        <div v-if="!loading" class="border-t border-border px-3 py-2 flex justify-end">
+          <button
+            class="flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+            data-testid="dictionary-save-word"
+            @click="handleSave"
+          >
+            <ListPlus :size="13" />
+            {{ t('reader.dictionary.saveWord') }}
+          </button>
         </div>
       </div>
     </div>

@@ -3,6 +3,11 @@ import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils'
 import { i18n } from '@/i18n'
 import DictionaryPopover from '../DictionaryPopover.vue'
 
+const mockExternalLookup = vi.fn().mockResolvedValue([])
+vi.mock('@/features/vocabulary/composables/vocabularyApi', () => ({
+  dictionaryApi: { lookup: (...args: unknown[]) => mockExternalLookup(...args) },
+}))
+
 enableAutoUnmount(afterEach)
 
 const definitionUrl = 'https://en.wiktionary.org/api/rest_v1/page/definition/nada'
@@ -45,7 +50,7 @@ describe('DictionaryPopover with the actual dictionary lookup', () => {
     expect(wrapper.text()).toContain('nothing')
     expect(wrapper.text()).not.toContain('English sense.')
     expect(wrapper.text()).not.toContain('Could not load definition')
-    expect(wrapper.find('button').exists()).toBe(false)
+    expect(wrapper.find('button:not([data-testid="dictionary-save-word"])').exists()).toBe(false)
   })
 
   it('handles an upstream 501 and recovers on Retry using the same language', async () => {
@@ -63,6 +68,6 @@ describe('DictionaryPopover with the actual dictionary lookup', () => {
     expect(wrapper.text()).toContain('nothing')
     expect(wrapper.text()).not.toContain('English sense.')
     expect(wrapper.text()).not.toContain('Could not load definition')
-    expect(wrapper.find('button').exists()).toBe(false)
+    expect(wrapper.find('button:not([data-testid="dictionary-save-word"])').exists()).toBe(false)
   })
 })

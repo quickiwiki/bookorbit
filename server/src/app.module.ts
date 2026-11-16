@@ -82,6 +82,8 @@ import { NotificationModule } from './modules/notification/notification.module';
 import { SeriesModule } from './modules/series/series.module';
 import { EntityManagerModule } from './modules/entity-manager/entity-manager.module';
 import { FontModule } from './modules/font/font.module';
+import { DictionaryModule } from './modules/dictionary/dictionary.module';
+import { VocabularyModule } from './modules/vocabulary/vocabulary.module';
 import { ServerFontModule } from './modules/server-font/server-font.module';
 import { KoreaderModule } from './modules/koreader/koreader.module';
 import { AppInfoModule } from './modules/app-info/app-info.module';
@@ -206,6 +208,8 @@ import { StoryEditsModule } from './modules/story-edits/story-edits.module';
     SeriesModule,
     EntityManagerModule,
     FontModule,
+    VocabularyModule,
+    DictionaryModule,
     ServerFontModule,
     KoreaderModule,
     AppInfoModule,

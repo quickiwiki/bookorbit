@@ -236,7 +236,7 @@ function stripHtml(html: string): string {
   return (body.textContent ?? '').replace(/\s+/g, ' ').trim()
 }
 
-function normalizeLang(lang: string): string {
+export function normalizeLang(lang: string): string {
   if (!lang) return 'en'
   const normalized = lang.trim().toLowerCase()
   if (!normalized) return 'en'

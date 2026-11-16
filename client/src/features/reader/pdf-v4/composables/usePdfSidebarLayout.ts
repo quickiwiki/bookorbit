@@ -1,7 +1,7 @@
 import { computed, ref, watch } from 'vue'
 import { breakpointsTailwind, useBreakpoints, useLocalStorage } from '@vueuse/core'
 
-export type PdfSidebarTab = 'thumbnails' | 'contents' | 'search' | 'highlights'
+export type PdfSidebarTab = 'thumbnails' | 'contents' | 'search' | 'highlights' | 'words'
 
 /**
  * `sheet` is a phone bottom sheet, `overlay` floats above the page on tablets,
@@ -9,7 +9,7 @@ export type PdfSidebarTab = 'thumbnails' | 'contents' | 'search' | 'highlights'
  */
 export type PdfSidebarLayout = 'sheet' | 'overlay' | 'dock'
 
-export const PDF_SIDEBAR_TABS: readonly PdfSidebarTab[] = ['thumbnails', 'contents', 'search', 'highlights']
+export const PDF_SIDEBAR_TABS: readonly PdfSidebarTab[] = ['thumbnails', 'contents', 'search', 'highlights', 'words']
 
 export const PDF_SIDEBAR_MIN_WIDTH = 260
 export const PDF_SIDEBAR_MAX_WIDTH = 520

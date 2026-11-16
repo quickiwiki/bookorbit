@@ -369,8 +369,8 @@ describe('PdfReaderSidebar', () => {
     const wrapper = mountSidebar()
 
     const tabs = wrapper.findAll('[role="tab"]')
-    expect(tabs).toHaveLength(4)
-    expect(tabs.map((tab) => tab.attributes('aria-label'))).toEqual(['Pages', 'Contents', 'Search', 'Notes'])
+    expect(tabs).toHaveLength(5)
+    expect(tabs.map((tab) => tab.attributes('aria-label'))).toEqual(['Pages', 'Contents', 'Search', 'Notes', 'Words'])
 
     const active = tabs[2]!
     expect(active.attributes('aria-selected')).toBe('true')
@@ -396,7 +396,7 @@ describe('PdfReaderSidebar', () => {
     expect(wrapper.emitted('update:activeTab')?.at(-1)).toEqual(['thumbnails'])
 
     await tabList.trigger('keydown', { key: 'End' })
-    expect(wrapper.emitted('update:activeTab')?.at(-1)).toEqual(['highlights'])
+    expect(wrapper.emitted('update:activeTab')?.at(-1)).toEqual(['words'])
 
     await tabList.trigger('keydown', { key: 'a' })
     expect(wrapper.emitted('update:activeTab')).toHaveLength(4)
@@ -405,7 +405,7 @@ describe('PdfReaderSidebar', () => {
   it('keeps the rail available while the panel is closed', () => {
     const wrapper = mountSidebar({ open: false })
 
-    expect(wrapper.findAll('[role="tab"]')).toHaveLength(4)
+    expect(wrapper.findAll('[role="tab"]')).toHaveLength(5)
     expect(wrapper.find('aside').exists()).toBe(false)
     expect(wrapper.get('[role="tab"][aria-label="Search"]').attributes('aria-selected')).toBe('false')
   })
@@ -421,7 +421,7 @@ describe('PdfReaderSidebar', () => {
 
     expect(wrapper.find('aside').exists()).toBe(false)
     expect(wrapper.find('[data-testid="bottom-sheet"]').exists()).toBe(true)
-    expect(wrapper.findAll('[role="tab"]').map((tab) => tab.text())).toEqual(['Pages', 'Contents', 'Search', 'Notes'])
+    expect(wrapper.findAll('[role="tab"]').map((tab) => tab.text())).toEqual(['Pages', 'Contents', 'Search', 'Notes', 'Words'])
   })
 
   it('resizes the docked panel with the keyboard within its bounds', async () => {

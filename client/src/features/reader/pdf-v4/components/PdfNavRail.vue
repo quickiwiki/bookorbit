@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nextTick, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { BookOpen, FileText, Highlighter, Search } from '@lucide/vue'
+import { BookOpen, FileText, Highlighter, Languages, Search } from '@lucide/vue'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { PDF_SIDEBAR_TABS, type PdfSidebarTab } from '../composables/usePdfSidebarLayout'
 
@@ -26,6 +26,7 @@ const TAB_ICONS = {
   contents: BookOpen,
   search: Search,
   highlights: Highlighter,
+  words: Languages,
 } as const
 
 const TAB_LABEL_KEYS = {
@@ -33,6 +34,7 @@ const TAB_LABEL_KEYS = {
   contents: 'reader.pdf.sidebar.contents',
   search: 'reader.pdf.sidebar.search',
   highlights: 'reader.sidebar.tabs.notesShort',
+  words: 'vocabulary.pageWords.tab',
 } as const
 
 function label(tab: PdfSidebarTab) {

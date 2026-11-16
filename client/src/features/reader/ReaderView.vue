@@ -45,6 +45,8 @@ import SelectionPopup from './epub/components/SelectionPopup.vue'
 import ReaderSearchPanel from './epub/components/ReaderSearchPanel.vue'
 import NoteDialog from './shared/components/NoteDialog.vue'
 import DictionaryPopover from './epub/components/DictionaryPopover.vue'
+import { useSaveVocabularyWord } from '@/features/vocabulary/composables/useSaveVocabularyWord'
+import { contextFromRange } from '@/features/vocabulary/lib/context-sentence'
 import TranslationPopover from './epub/components/TranslationPopover.vue'
 import TranslationSheet from './epub/components/TranslationSheet.vue'
 import KeyboardShortcutsModal from './epub/components/KeyboardShortcutsModal.vue'
@@ -237,6 +239,8 @@ const isMobile = typeof window !== 'undefined' && ('ontouchstart' in window || n
 
 function handleDefine() {
   dictionaryWord.value = selection.text.value
+  dictionaryContext.value = contextFromRange(selection.selectionRange.value, selection.text.value)
+  dictionaryCfi.value = selection.cfi.value
   dictionaryPosition.value = {
     x: selection.position.value.x,
     y: selection.position.value.y,
@@ -244,6 +248,41 @@ function handleDefine() {
   }
   selection.dismiss()
   showDictionary.value = true
+}
+
+const vocabulary = useSaveVocabularyWord()
+const dictionaryContext = ref<string | null>(null)
+const dictionaryCfi = ref<string | null>(null)
+
+function vocabularyLocation() {
+  return { bookId, bookFileId: fileId, bookFormat: fileFormat, bookTitle: bookMeta.value?.title ?? null, language: bookLanguage.value || null }
+}
+
+/** Text on screen now, for the sidebar's Words tab. Read after the relocate listeners have cached the range. */
+const pageText = ref('')
+const wordsSaveContext = computed(() => ({ ...vocabularyLocation(), cfi: cfi.value ?? null }))
+
+function updatePageText() {
+  const text = getVisibleRange()?.toString() ?? ''
+  if (text !== pageText.value) pageText.value = text
+}
+
+function handleAddWord() {
+  const word = selection.text.value
+  const context = contextFromRange(selection.selectionRange.value, word)
+  const cfi = selection.cfi.value
+  selection.dismiss()
+  void vocabulary.save({ word, context, cfi, ...vocabularyLocation() })
+}
+
+function handleSaveDictionaryWord(definition: string | null) {
+  void vocabulary.save({
+    word: dictionaryWord.value,
+    definition,
+    context: dictionaryContext.value,
+    cfi: dictionaryCfi.value,
+    ...vocabularyLocation(),
+  })
 }
 
 function handleTranslate() {
@@ -748,6 +787,7 @@ async function handlePlayFromCurrentPage() {
 
 function onRelocateHandler(detail: RelocateDetail) {
   progress.onRelocate(detail, relocationSource)
+  setTimeout(updatePageText, 0)
   onActivity()
   bookmarks.setCfi(detail?.cfi ?? null)
   toc.setActiveHref(detail?.tocItem?.href ?? '')
@@ -1671,6 +1711,9 @@ onUnmounted(() => {
       :expandedHrefs="expandedHrefs"
       :pinned="isSidebarPinned"
       :navigationLocked="isNavigationLocked"
+      :pageText="pageText"
+      :bookLanguage="bookLanguage || null"
+      :wordsSaveContext="wordsSaveContext"
       @close="showSidebar = false"
       @togglePinned="toggleSidebarPinned"
       @navigateChapter="navigateChapterFromSidebar"
@@ -1717,6 +1760,7 @@ onUnmounted(() => {
       @search="() => openSearchWithText(selection.text.value)"
       @translate="handleTranslate"
       @define="handleDefine"
+      @addWord="handleAddWord"
       @note="handleOpenNoteDialog"
       @deleteAnnotation="handleDeleteAnnotation"
       @dismiss="selection.dismiss()"
@@ -1751,6 +1795,7 @@ onUnmounted(() => {
       :word="dictionaryWord"
       :position="dictionaryPosition"
       :lang="bookLanguage"
+      @saveWord="handleSaveDictionaryWord"
       @close="showDictionary = false"
     />
 
