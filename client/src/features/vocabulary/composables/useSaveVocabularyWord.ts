@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { readonly, ref, shallowRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
@@ -10,6 +10,12 @@ import { vocabularyApi } from './vocabularyApi'
 
 /** Selections longer than this are phrases or passages, not vocabulary. */
 const MAX_WORDS_IN_SELECTION = 6
+
+const lastSaved = shallowRef<{ word: VocabularyWord; at: number } | null>(null)
+
+export function useLastSavedVocabularyWord() {
+  return readonly(lastSaved)
+}
 
 export function useSaveVocabularyWord() {
   const { t } = useI18n()
@@ -37,6 +43,7 @@ export function useSaveVocabularyWord() {
         ? t('vocabulary.toast.added', { word: result.word.word, list: result.listName })
         : t('vocabulary.toast.alreadySaved', { word: result.word.word, list: result.listName })
       toast.success(message, options.viewAction === false ? {} : { action: { label: t('vocabulary.toast.view'), onClick: openVocabulary } })
+      lastSaved.value = { word: result.word, at: Date.now() }
       return result.word
     } catch (error) {
       toast.error(errorMessage(error, 'vocabulary.errors.addWord'))

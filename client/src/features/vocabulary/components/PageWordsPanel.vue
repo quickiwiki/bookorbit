@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDebounceFn } from '@vueuse/core'
 import { Check, ChevronDown, Plus, Search } from '@lucide/vue'
 import type { VocabularyWord } from '@bookorbit/types'
 import { Input } from '@/components/ui/input'
 import { storage } from '@/services/storage'
-import { useSaveVocabularyWord } from '../composables/useSaveVocabularyWord'
+import { useLastSavedVocabularyWord, useSaveVocabularyWord } from '../composables/useSaveVocabularyWord'
 import { vocabularyApi } from '../composables/vocabularyApi'
 import { sentenceAround } from '../lib/context-sentence'
 import { pageWordKey, pageWords, type PageWord, type PageWordsSaveContext } from '../lib/page-words'
@@ -15,6 +15,7 @@ import WordMeanings from './WordMeanings.vue'
 type Order = 'page' | 'az'
 const ORDER_KEY = 'readerPageWordsOrder'
 const MATCH_DEBOUNCE_MS = 400
+const FLASH_MS = 2500
 
 const props = defineProps<{ text: string; language: string | null; saveContext: PageWordsSaveContext }>()
 
@@ -25,6 +26,10 @@ const query = ref('')
 const order = ref<Order>(storage.get<Order>(ORDER_KEY, 'page') === 'az' ? 'az' : 'page')
 const openKey = ref<string | null>(null)
 const saved = ref(new Map<string, VocabularyWord>())
+const flashKey = ref<string | null>(null)
+const root = ref<HTMLElement | null>(null)
+const lastSaved = useLastSavedVocabularyWord()
+let flashTimer: ReturnType<typeof setTimeout> | undefined
 
 watch(order, (value) => storage.set(ORDER_KEY, value))
 
@@ -62,6 +67,23 @@ watch(
     openKey.value = null
   },
 )
+
+watch(lastSaved, (entry) => {
+  if (!entry) return
+  const key = pageWordKey(entry.word.word)
+  if (!words.value.some((w) => w.key === key)) return
+  saved.value = new Map(saved.value).set(key, entry.word)
+  flashKey.value = key
+  clearTimeout(flashTimer)
+  flashTimer = setTimeout(() => (flashKey.value = null), FLASH_MS)
+  void nextTick(() => root.value?.querySelector(`[data-word-key="${CSS.escape(key)}"]`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }))
+})
+onUnmounted(() => clearTimeout(flashTimer))
+
+function rowClass(word: PageWord) {
+  if (flashKey.value === word.key) return 'bg-primary/15 ring-1 ring-primary/40'
+  return openKey.value === word.key ? 'bg-muted/50' : ''
+}
 
 function savedMeaning(word: PageWord) {
   return saved.value.get(word.key)?.definition?.split('\n')[0] ?? null
@@ -102,7 +124,7 @@ async function handleUse(word: PageWord, definition: string) {
 </script>
 
 <template>
-  <div class="flex min-h-0 flex-1 flex-col" data-testid="page-words-panel">
+  <div ref="root" class="flex min-h-0 flex-1 flex-col" data-testid="page-words-panel">
     <div class="flex items-center gap-2 px-3 pb-2">
       <div class="relative flex-1">
         <Search :size="13" class="absolute start-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -133,7 +155,13 @@ async function handleUse(word: PageWord, definition: string) {
           }}
         </p>
         <ul>
-          <li v-for="word in group" :key="word.key" class="rounded-md" :class="openKey === word.key ? 'bg-muted/50' : ''">
+          <li
+            v-for="word in group"
+            :key="word.key"
+            class="rounded-md transition-colors duration-500"
+            :class="rowClass(word)"
+            :data-word-key="word.key"
+          >
             <div class="group flex items-center gap-1">
               <button
                 type="button"
