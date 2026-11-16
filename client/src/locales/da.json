@@ -972,7 +972,7 @@
         "targetUser": "Mål Bruger",
         "doNotImport": "Importer ikke denne bruger",
         "noSourceUsersLoaded": "Ingen kildebrugere indlæst endnu.",
-        "noActiveTargetUsers": "Ingen aktive målbrugere fundet. Opret eller genaktivér en BookOrbit-bruger før mapping.",
+        "noActiveTargetUsers": "Ingen aktive målbrugere fundet. Opret eller genaktivér en Book Reader Club-bruger før mapping.",
         "pathPrefixMappings": "Sti Præfiks Tilføjelser",
         "addMapping": "Tilføj Kortlægning",
         "pathMappingsHelp1": "Sti tilknytninger oversætte kildefil stier til målstier, så bøger kan matches af fil placering. For eksempel, hvis dit Booklore bibliotek gemt filer under",
@@ -1862,11 +1862,11 @@
         "syncUrlCopyFailed": "Mislykkedes at kopiere synkroniserings URL",
         "syncPreferences": "Synkroniser Indstillinger",
         "twoWaySync": "Synkronisering af tovejs fremskridt",
-        "twoWaySyncHint": "Synkroniser læseposition mellem BookOrbit og Kobo. Kræver KEPUB levering for præcise placeringer og pålidelig sidegendannelse.",
-        "syncHighlights": "Synkroniser BookOrbit- fremhævninger til Kobo",
-        "syncHighlightsHint": "Send højdepunkter lavet i BookOrbit eller KOReader til din Kobo. Kobo højdepunkter importeres til BookOrbit selv når dette er slukket. Tilknyttede annotationer synkroniserer redigeringer og sletter begge måder. Kræver levering af KEPUB. Bogen om Kobo skal være den KEPUB downloadet fra BookOrbit.",
+        "twoWaySyncHint": "Synkroniser læseposition mellem Book Reader Club og Kobo. Kræver KEPUB levering for præcise placeringer og pålidelig sidegendannelse.",
+        "syncHighlights": "Synkroniser Book Reader Club- fremhævninger til Kobo",
+        "syncHighlightsHint": "Send højdepunkter lavet i Book Reader Club eller KOReader til din Kobo. Kobo højdepunkter importeres til Book Reader Club selv når dette er slukket. Tilknyttede annotationer synkroniserer redigeringer og sletter begge måder. Kræver levering af KEPUB. Bogen om Kobo skal være den KEPUB downloadet fra Book Reader Club.",
         "convertKepub": "Konvertér til KEPUB",
-        "convertKepubHint": "Send kvalificerede EPUB'er som KEPUB. Dette bliver ved når fremskridtssynkronisering eller højdepunkterne BookOrbit to Kobo er aktiveret. På den næste Kobo synkronisering, berørte bøger tilbydes igen som KEPUB downloads; fjerne en gammel EPUB kopi, hvis Kobo bliver ved med at åbne den.",
+        "convertKepubHint": "Send kvalificerede EPUB'er som KEPUB. Dette bliver ved når fremskridtssynkronisering eller højdepunkterne Book Reader Club to Kobo er aktiveret. På den næste Kobo synkronisering, berørte bøger tilbydes igen som KEPUB downloads; fjerne en gammel EPUB kopi, hvis Kobo bliver ved med at åbne den.",
         "forceHyphenation": "Gennemtving bindestreg",
         "forceHyphenationHint": "Sikrer konsekvent tekstbegrundelse. Dette vil regenerere cachelagrede KEPUBs.",
         "progressThresholds": "Tærskelværdier For Fremskridt",
@@ -1876,7 +1876,7 @@
         "markAsFinished": "Markér som afsluttet",
         "markAsFinishedHint": "Procenttærskel til at markere en bog som \"Færdig\".",
         "kepubLimit": "KEPUB konverteringsgrænse",
-        "kepubLimitHint": "Bøger over denne grænse sendes som almindelige EPUB'er, så BookOrbit vil ikke synkronisere deres læserposition tilbage til Kobo.",
+        "kepubLimitHint": "Bøger over denne grænse sendes som almindelige EPUB'er, så Book Reader Club vil ikke synkronisere deres læserposition tilbage til Kobo.",
         "changesMustBeSaved": "Ændringer skal gemmes for at træde i kraft.",
         "saving": "Gemmer...",
         "saveSyncSettings": "Gem Synkroniseringsindstillinger",
@@ -1938,8 +1938,8 @@
           "readingPositionSynced": "Læsning position synkroniseret",
           "labelWithTitle": "{label}: {title}",
           "updateCount": "{count, plural, one {# opdatering} other {# opdateringer}}",
-          "directionToKobo": "BookOrbit - > Kobo",
-          "directionToBookOrbit": "Kobo - > BookOrbit",
+          "directionToKobo": "Book Reader Club - > Kobo",
+          "directionToBookOrbit": "Kobo - > Book Reader Club",
           "twoWaySyncEnabled": "Tovejs synkronisering aktiveret",
           "deviceProgressSaved": "Enhedens fremskridt gemt",
           "summary": {
@@ -1971,7 +1971,7 @@
           "filterFailures": "Fejl",
           "refresh": "Opdater",
           "loadingActivity": "Indlæser Kobo aktivitet...",
-          "noActivityHint": "Seneste synkroniseringsaktivitet vises efter en parret Kobo kontakter BookOrbit.",
+          "noActivityHint": "Seneste synkroniseringsaktivitet vises efter en parret Kobo kontakter Book Reader Club.",
           "error": "Fejl",
           "loading": "Indlæser...",
           "loadMore": "Indlæs mere aktivitet"
@@ -1982,7 +1982,7 @@
         "nextSteps": {
           "title": "Næste Trin",
           "step1": "1. Konfigurer din Kobo enhed til at synkronisere med Synkroniserings URLen ovenfor.",
-          "step2": "2. I BookOrbit, gå til enhver samling fra sidebjælken, klik på ikonet Rediger, og aktivér {syncToKobo}. Kun bøger inde i synkroniseringsaktiverede samlinger vil downloade til din enhed."
+          "step2": "2. I Book Reader Club, gå til enhver samling fra sidebjælken, klik på ikonet Rediger, og aktivér {syncToKobo}. Kun bøger inde i synkroniseringsaktiverede samlinger vil downloade til din enhed."
         },
         "syncToKobo": "Synkronisér med Kobo",
         "tabs": {
@@ -1992,7 +1992,7 @@
       },
       "koreader": {
         "title": "KOReader Synkronisering",
-        "subtitle": "Gennemse dit BookOrbit-katalog i KOReader og synkroniser fremskridt, læseaktivitet, højdepunkter og annotationsændringer.",
+        "subtitle": "Gennemse dit Book Reader Club-katalog i KOReader og synkroniser fremskridt, læseaktivitet, højdepunkter og annotationsændringer.",
         "tabs": {
           "sync": "Synkroniser Indstillinger",
           "fileNaming": "Navngivning Af Fil"
@@ -2007,7 +2007,7 @@
           "saveAccount": "Gem kontostandard",
           "deviceTitle": "KOReader enhed tilsidesætter",
           "deviceDescription": "Tilpas enhver kombination af standard-, serie- og standalone-stier. Tomme enhedsspecifikke rækker arver enhedens standard, som selv kan arve kontoens standard KOReader-mønster.",
-          "noDevices": "Enheder vises her efter de synkroniseres med BookOrbit.",
+          "noDevices": "Enheder vises her efter de synkroniseres med Book Reader Club.",
           "customOrganization": "Brugerdefineret organisation",
           "usingAccountDefault": "Bruger kontostandard",
           "deviceDefaultHelp": "Fallback for denne enhed. Lad det være lig med kontoens standard at arve fremtidige ændringer automatisk.",
@@ -2044,7 +2044,7 @@
         "notConfiguredHint": "Opret et sæt synkroniseringsoplysninger, og brug dem derefter med BookOrbit KOReader plugin til browsing, downloads, fremskridt, læsning af begivenheder, højdepunkter og sletninger.",
         "createCredentials": "Opret legitimationsoplysninger",
         "createFormTitle": "Opret KOReader Sync Legitimationsoplysninger",
-        "createFormHint": "Disse legitimationsoplysninger godkender dine KOReader enheder med BookOrbit.",
+        "createFormHint": "Disse legitimationsoplysninger godkender dine KOReader enheder med Book Reader Club.",
         "username": "Brugernavn",
         "usernamePlaceholder": "f.eks. myreader",
         "password": "Adgangskode",
@@ -2056,7 +2056,7 @@
         "status": "KOReader Status",
         "refresh": "Opdater",
         "progressSync": "Synkronisering af fremskridt",
-        "progressSyncHint": "Tillad KOReader enheder at synkronisere fremskridt, læse aktivitet, højdepunkter og annotation sletninger med BookOrbit.",
+        "progressSyncHint": "Tillad KOReader enheder at synkronisere fremskridt, læse aktivitet, højdepunkter og annotation sletninger med Book Reader Club.",
         "lastSync": "Seneste synkronisering",
         "syncedBooks": "Synkroniserede bøger",
         "bookCount": "{count, plural, =0 {ingen bøger} one {# bog} other {# bøger}}",
@@ -2070,11 +2070,11 @@
         "preconfiguredPlugin": "Prækonfigureret BookOrbit plugin",
         "preconfiguredPluginHintPrefix": "Download en zip med serverens URL, og dit sync login er allerede konfigureret. Dette plugin indeholder katalog browsing og synkronisering. Kopier mappen til",
         "preconfiguredPluginHintSuffix": "og genstart KOReader.",
-        "latestPluginNote": "{label}. Enhedsopdateringer kører fra BookOrbit-menuen i KOReader.",
+        "latestPluginNote": "{label}. Enhedsopdateringer kører fra Book Reader Club-menuen i KOReader.",
         "preparing": "Forbereder...",
         "downloadPlugin": "Download Plugin",
         "noDevicesSynced": "Ingen enheder har synkroniseret endnu",
-        "noDevicesSyncedHint": "Installér BookOrbit- plugin'et til fuld synkronisering, eller konfigurér KOReader's lagerfremgangssynkronisering for opdateringer kun for fremskridt.",
+        "noDevicesSyncedHint": "Installér Book Reader Club- plugin'et til fuld synkronisering, eller konfigurér KOReader's lagerfremgangssynkronisering for opdateringer kun for fremskridt.",
         "lastSyncLabel": "Seneste synkronisering:",
         "lastBookLabel": "Sidste bog:",
         "noneYet": "Ingen endnu",
@@ -2091,7 +2091,7 @@
         "failedPositions": "{count, plural, =0 {ingen fremhævningspositioner behøver opmærksomhed.} one {# fremhævningspositionen behøver opmærksomhed.} other {# fremhævningspositioner behøver opmærksomhed.}}",
         "setupGuide": "Opsætnings Guide",
         "setupSteps": "KOReader opsætningstrin",
-        "setupStepsHint": "Brug plugin'et BookOrbit til katalogbrowsing, downloads, fremskridt, læsebegivenheder og fremhævninger. Brug kun stock plugin'et til fremgang.",
+        "setupStepsHint": "Brug plugin'et Book Reader Club til katalogbrowsing, downloads, fremskridt, læsebegivenheder og fremhævninger. Brug kun stock plugin'et til fremgang.",
         "pluginGuideTitle": "BookOrbit plugin",
         "pluginStep1": "Download det prækonfigurerede plugin ovenfor.",
         "pluginStep2Prefix": "Pak det ud og kopier",
@@ -2104,7 +2104,7 @@
         "stockStep1Prefix": "Gå til din KOReader enhed",
         "stockStep1Suffix": ".",
         "stockStep3": "Indtast det brugernavn og den adgangskode, du har oprettet, og tryk derefter på Login.",
-        "locationNote": "BookOrbit gemmer KOReader-kompatible EPUB-placeringer fra weblæseren. Gendan skal lande tæt på samme position, selvom nøjagtige linje placering kan variere af læser og EPUB layout.",
+        "locationNote": "Book Reader Club gemmer KOReader-kompatible EPUB-placeringer fra weblæseren. Gendan skal lande tæt på samme position, selvom nøjagtige linje placering kan variere af læser og EPUB layout.",
         "dangerZone": "Fare Zone",
         "deleteCredentials": "Slet KOReader legitimationsoplysninger",
         "deleteCredentialsHint": "Fjern synkroniseringsoplysninger og frakobl alle enheder. Fremskridsdata vil blive bevaret.",
@@ -2145,7 +2145,7 @@
           "unknownFile": "Ukendt KOReader fil {hash}",
           "unknownAuthor": "Ukendt forfatter",
           "noTitleOrAuthor": "Ingen titel eller forfatter rapporteret",
-          "bookNumber": "BookOrbit bog #{id}",
+          "bookNumber": "Book Reader Club bog #{id}",
           "toast": {
             "unmatchedRefreshed": "Uovertruffen bøger opdateret",
             "unmatchedRefreshFailed": "Mislykkedes at genopfriske ikke-matchede bøger",
@@ -2164,8 +2164,8 @@
           "modal": {
             "linkTitle": "Link KOReader bog",
             "changeTitle": "Skift KOReader link",
-            "bookOrbitBook": "BookOrbit bog",
-            "searchPlaceholder": "Søg i biblioteket BookOrbit",
+            "bookOrbitBook": "Book Reader Club bog",
+            "searchPlaceholder": "Søg i biblioteket Book Reader Club",
             "minChars": "Angiv mindst 2 tegn.",
             "searching": "Søger...",
             "noBooksFound": "Ingen bøger fundet.",
@@ -2175,14 +2175,14 @@
             "loadMore": "Indlæs mere",
             "confirmTitle": "Bekræft KOReader link",
             "koreader": "KOReader",
-            "bookOrbit": "BookOrbit",
+            "bookOrbit": "Book Reader Club",
             "bookId": "Bog-ID: {id}",
-            "syncedStatsNote": "Allerede synkroniserede statistikker vil forblive på deres nuværende BookOrbit bog.",
+            "syncedStatsNote": "Allerede synkroniserede statistikker vil forblive på deres nuværende Book Reader Club bog.",
             "chooseDifferent": "Vælg forskellige",
             "saving": "Gemmer...",
             "confirmLink": "Bekræft link",
             "unlinkTitle": "Afbryd koReader bog?",
-            "unlinkBody": "Fremtidige synkroniseringer for denne hash vil stoppe med at løse op for {title} indtil den er linket igen. Allerede synkroniserede statistikker vil forblive på deres aktuelle BookOrbit bog.",
+            "unlinkBody": "Fremtidige synkroniseringer for denne hash vil stoppe med at løse op for {title} indtil den er linket igen. Allerede synkroniserede statistikker vil forblive på deres aktuelle Book Reader Club bog.",
             "unlinking": "Afbryder..."
           },
           "dismiss": "Afvis",
@@ -2190,15 +2190,15 @@
           "dismissing": "Afslap...",
           "unlinking": "Afbryder...",
           "unlinkConfirmTitle": "Afbryd koReader bog?",
-          "unlinkConfirmBody": "Fremtidige synkroniseringer for denne hash vil stoppe med at løse op for {title} indtil den er linket igen. Allerede synkroniserede statistikker vil forblive på deres aktuelle BookOrbit bog.",
+          "unlinkConfirmBody": "Fremtidige synkroniseringer for denne hash vil stoppe med at løse op for {title} indtil den er linket igen. Allerede synkroniserede statistikker vil forblive på deres aktuelle Book Reader Club bog.",
           "dismissConfirmTitle": "Afvis {title}?",
           "dismissConfirmBody": "Dette fjerner det fra din uovertruffen bog liste. Hvis nogen enhed rapporterer denne hash igen, vil det dukke op igen som en ny post.",
           "dismissAllConfirmTitle": "{count, plural, =0 {ingen uovertruffen bøger} one {Afvis alle # uovertruffen bog?} other {Afvis alle # uovertruffen bøger?}}",
           "dismissAllConfirmBody": "Dette rydder hele din uovertruffen bogliste, ikke kun den aktuelle side. Hvis nogen enhed rapporterer en af disse hashes igen, vil det dukke op igen som en ny post.",
           "changeLinkTitle": "Skift KOReader link",
           "linkBookTitle": "Link KOReader bog",
-          "bookOrbitBook": "BookOrbit bog",
-          "searchLibraryPlaceholder": "Søg i biblioteket BookOrbit",
+          "bookOrbitBook": "Book Reader Club bog",
+          "searchLibraryPlaceholder": "Søg i biblioteket Book Reader Club",
           "enterMinChars": "Angiv mindst 2 tegn.",
           "searching": "Søger...",
           "noBooksFound": "Ingen bøger fundet.",
@@ -2209,7 +2209,7 @@
           "loadingMore": "Indlæser...",
           "confirmLinkTitle": "Bekræft KOReader link",
           "bookId": "Bog-ID: {id}",
-          "syncedStatsNote": "Allerede synkroniserede statistikker vil forblive på deres nuværende BookOrbit bog.",
+          "syncedStatsNote": "Allerede synkroniserede statistikker vil forblive på deres nuværende Book Reader Club bog.",
           "chooseDifferent": "Vælg forskellige",
           "saving": "Gemmer...",
           "confirmLink": "Bekræft link"
@@ -4458,8 +4458,8 @@
       "newCollection": "Ny Samling",
       "noCollections": "Ingen samlinger endnu",
       "newReleaseNotes": "Nye udgivelsesnoter tilgængelige",
-      "support": "Støt BookOrbit",
-      "supportAria": "Support BookOrbit på Ko-fi",
+      "support": "Støt Book Reader Club",
+      "supportAria": "Support Book Reader Club på Ko-fi",
       "sectionHeader": {
         "add": "Tilføj",
         "showAll": "Vis alle",
@@ -4995,7 +4995,7 @@
     }
   },
   "errors": {
-    "network": "Could not reach BookOrbit. Check your connection, then try again."
+    "network": "Could not reach Book Reader Club. Check your connection, then try again."
   },
   "hardcover": {
     "settings": {
@@ -5041,7 +5041,7 @@
       },
       "syncOnProgress": {
         "title": "Synkroniser ved fremdriftsopdatering",
-        "description": "Push læsning fremskridt og datoer når BookOrbit eller KOReader fremskridt ændres."
+        "description": "Push læsning fremskridt og datoer når Book Reader Club eller KOReader fremskridt ændres."
       },
       "syncOnRating": {
         "title": "Synkroniser ved ændring af rating",
@@ -5095,7 +5095,7 @@
     },
     "import": {
       "title": "Træk læsestatus",
-      "description": "Forhåndsvisning af Hardcover matcher før udfyldning blank BookOrbit statusser.",
+      "description": "Forhåndsvisning af Hardcover matcher før udfyldning blank Book Reader Club statusser.",
       "clear": "Ryd",
       "preview": "Eksempelvisning",
       "importProgress": "Import fremskridt",
@@ -5554,7 +5554,7 @@
       "sourceUser": "Kilde Bruger",
       "targetUser": "Mål Bruger",
       "noSourceUsersLoaded": "Ingen kildebrugere indlæst endnu.",
-      "noActiveTargetUsers": "Ingen aktive målbrugere fundet. Opret eller genaktivér en BookOrbit-bruger før mapping.",
+      "noActiveTargetUsers": "Ingen aktive målbrugere fundet. Opret eller genaktivér en Book Reader Club-bruger før mapping.",
       "pathPrefixMappings": "Sti Præfiks Tilføjelser",
       "addMapping": "Tilføj Kortlægning",
       "pathMappingsExplanation": "Sti tilknytninger oversætte kildefil stier til målstier, så bøger kan matches af fil placering. Bøger er også matchet af ISBN, fil hash, og titel / forfatter uanset sti-tilknytninger.",
@@ -6387,7 +6387,7 @@
       },
       "confirmDialog": {
         "title": "{count, plural, one {Omdøb # fil på disken?} other {Omdøb # filer på disken?}}",
-        "body": "Dette flytter rigtige filer inde i {library}. BookOrbit registrerer hver flytning, men fortrydelse betyder at omdøbe dem igen."
+        "body": "Dette flytter rigtige filer inde i {library}. Book Reader Club registrerer hver flytning, men fortrydelse betyder at omdøbe dem igen."
       }
     },
     "bookDuplicates": {
