@@ -1,0 +1,1 @@
+ALTER TABLE "vocabulary_words" ADD COLUMN "language" varchar(16);

@@ -1,0 +1,1 @@
+CREATE INDEX "vocabulary_words_user_word_idx" ON "vocabulary_words" USING btree ("user_id","normalized_word","id");

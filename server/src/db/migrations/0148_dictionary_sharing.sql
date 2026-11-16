@@ -1,0 +1,2 @@
+ALTER TABLE "dictionary_sources" ADD COLUMN "shared" boolean DEFAULT false NOT NULL;--> statement-breakpoint
+CREATE INDEX "dictionary_sources_shared_idx" ON "dictionary_sources" USING btree ("id") WHERE "dictionary_sources"."shared";
