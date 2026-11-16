@@ -31,5 +31,16 @@ export function usePdfPageText(documentId: MaybeRefOrGetter<string>, pageNumber:
     { immediate: true },
   )
 
-  return { text }
+  /** One page's text on demand, for pages other than the one the Words tab follows. */
+  async function readPage(pageIndex: number): Promise<string> {
+    const document = documentState.value?.document
+    if (!document || pageIndex < 0 || pageIndex >= document.pageCount) return ''
+    try {
+      return (await registry.value?.getEngine().extractText(toRaw(document), [pageIndex]).toPromise()) ?? ''
+    } catch {
+      return ''
+    }
+  }
+
+  return { text, readPage }
 }

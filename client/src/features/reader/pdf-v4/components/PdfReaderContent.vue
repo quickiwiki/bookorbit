@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { toast } from 'vue-sonner'
 import { AlertTriangle, ExternalLink, LoaderCircle } from '@lucide/vue'
 import type { DocumentState } from '@embedpdf/core'
 import { PdfErrorCode } from '@embedpdf/models'
@@ -30,6 +31,8 @@ import NoteDialog from '../../shared/components/NoteDialog.vue'
 import PdfSelectionPopup from './PdfSelectionPopup.vue'
 import { vocabularyBookInfo } from '@/features/vocabulary/composables/bookInfo'
 import { useSaveVocabularyWord } from '@/features/vocabulary/composables/useSaveVocabularyWord'
+import { sentenceAround } from '@/features/vocabulary/lib/context-sentence'
+import { textFromSlices } from '../lib/selection-text'
 
 const props = defineProps<{
   documentId: string
@@ -180,7 +183,7 @@ function handleHighlightCancelNote() {
 const vocabulary = useSaveVocabularyWord()
 
 const wordsTabOpen = computed(() => sidebar.open.value && sidebar.activeTab.value === 'words')
-const { text: pageText } = usePdfPageText(
+const { text: pageText, readPage: readPageText } = usePdfPageText(
   () => props.documentId,
   () => scrollState.value.currentPage,
   wordsTabOpen,
@@ -203,12 +206,24 @@ watch(
 )
 
 async function handleAddWord() {
-  const word = highlights.selectedText.value
   const pageIndex = highlights.selectionPageIndex.value
+  const slices = highlights.getSelectionSlices()
+  const selected = highlights.selectedText.value
   highlights.dismissPopup()
+  const pageTexts = new Map<number, string>()
+  await Promise.all(slices.map(async (slice) => pageTexts.set(slice.pageIndex, await readPageText(slice.pageIndex))))
+  // PDFs flagged "no copying" withhold the selected text; the page text still has it.
+  const word = selected || textFromSlices(slices, pageTexts)
+  if (!word) {
+    toast.error(t('reader.selection.noText'))
+    return
+  }
+  const page = pageIndex != null ? pageTexts.get(pageIndex) : undefined
+  const offset = pageIndex != null ? (slices.find((slice) => slice.pageIndex === pageIndex)?.start ?? -1) : -1
   const book = await vocabularyBookInfo(props.bookId)
   await vocabulary.save({
     word,
+    context: page ? sentenceAround(page, word, offset) : null,
     bookId: props.bookId,
     bookFileId: props.fileId,
     bookFormat: 'pdf',

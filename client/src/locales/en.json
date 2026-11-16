@@ -13590,7 +13590,8 @@
         "strikethrough": "Strikethrough",
         "squiggly": "Squiggly underline"
       },
-      "addWord": "Add to vocabulary"
+      "addWord": "Add to vocabulary",
+      "noText": "Could not read the selected text from this page"
     },
     "note": {
       "title": "Add note",

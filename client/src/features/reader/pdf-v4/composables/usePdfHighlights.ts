@@ -6,6 +6,7 @@ import type { SelectionMenuPlacement } from '@embedpdf/plugin-selection'
 import type { AnnotationItem, AnnotationRect } from '@bookorbit/types'
 import { usePdfAnnotations } from './usePdfAnnotations'
 import { boundingRect, buildPdfAnnotationObject, findOverlappingAnnotation, fromRect, toPdfPosition } from '../lib/pdf-annotation-render'
+import type { SelectionSlice } from '../lib/selection-text'
 
 const DEFAULT_HIGHLIGHT_COLOR = '#FACC15'
 const DEFAULT_HIGHLIGHT_STYLE = 'highlight'
@@ -43,6 +44,8 @@ export function usePdfHighlights({ bookId, fileId, documentId, getSurface, getPo
   const popupShowBelow = ref(false)
   const selectedText = ref('')
   const selectionPageIndex = ref<number | null>(null)
+  /** The selection's character offsets, kept so the text can be recovered when the engine withholds it. */
+  let selectionSlices: SelectionSlice[] = []
   const overlappingAnnotationId = ref<number | null>(null)
   const showNoteDialog = ref(false)
   const noteText = ref('')
@@ -99,6 +102,19 @@ export function usePdfHighlights({ bookId, fileId, documentId, getSurface, getPo
     for (const annotation of fileAnnotations.value) {
       renderAnnotation(annotation)
     }
+  }
+
+  function currentSlices(): SelectionSlice[] {
+    const state = selScope()?.getState?.()
+    const selection = state?.selection
+    if (!state || !selection)
+      return []
+    const slices: SelectionSlice[] = []
+    for (let page = selection.start.page; page <= selection.end.page; page++) {
+      const slice = state.slices[page]
+      if (slice) slices.push({ pageIndex: page, start: slice.start, count: slice.count })
+    }
+    return slices
   }
 
   async function captureSelection(): Promise<PendingSelectionPage[]> {
@@ -166,8 +182,10 @@ export function usePdfHighlights({ bookId, fileId, documentId, getSurface, getPo
     if (!positionPopup(placement)) return
     const selectionRect = fromRect(placement.rect)
     const overlapping = findOverlappingAnnotation(fileAnnotations.value, placement.pageIndex, selectionRect)?.id ?? null
+    const slices = currentSlices()
     const captured = await captureSelection()
     if (generation !== selectionGeneration) return
+    selectionSlices = slices
     overlappingAnnotationId.value = overlapping
     selectionPageIndex.value = placement.pageIndex
     pendingSelection = captured
@@ -378,6 +396,7 @@ export function usePdfHighlights({ bookId, fileId, documentId, getSurface, getPo
     popupShowBelow,
     selectedText,
     selectionPageIndex,
+    getSelectionSlices: () => selectionSlices,
     overlappingAnnotationId,
     showNoteDialog,
     noteText,
