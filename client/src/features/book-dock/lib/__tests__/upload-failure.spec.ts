@@ -58,7 +58,7 @@ describe('describeUploadFailure', () => {
 
   it('blames a reverse proxy for a 413 that did not come from BookOrbit', () => {
     expect(render(describeUploadFailure(server({ status: 413, fromBookOrbit: false })))).toBe(
-      'Rejected as too large before it reached BookOrbit, likely by a reverse proxy',
+      'Rejected as too large before it reached Book Reader Club, likely by a reverse proxy',
     )
   })
 
