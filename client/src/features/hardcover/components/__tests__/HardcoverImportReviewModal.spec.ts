@@ -246,7 +246,7 @@ describe('HardcoverImportReviewModal', () => {
     expect(wrapper.text()).toContain('Hardcover ID / -')
     expect(wrapper.text()).toContain('Title + author')
     expect(wrapper.text()).toContain('12.3% Hardcover')
-    expect(wrapper.text()).toContain('4.5% BookOrbit')
+    expect(wrapper.text()).toContain('4.5% Book Reader Club')
     expect(wrapper.text()).toContain('Conflict')
     expect(wrapper.text()).toContain('Unmatched')
     expect(wrapper.text()).toContain('Skipped')

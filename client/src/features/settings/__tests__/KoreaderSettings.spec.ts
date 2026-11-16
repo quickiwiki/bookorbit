@@ -661,7 +661,7 @@ describe('KoreaderSettings', () => {
     const bookResult = wrapper.findAll('button').find((button) => button.text().includes('BookOrbit Title'))!
     await bookResult.trigger('click')
     expect(wrapper.text()).toContain('Confirm KOReader link')
-    expect(wrapper.text()).toContain('Already synced stats will stay on their current BookOrbit book.')
+    expect(wrapper.text()).toContain('Already synced stats will stay on their current Book Reader Club book.')
 
     await buttonByText(wrapper, 'Confirm link')!.trigger('click')
     await flushPromises()
@@ -684,7 +684,7 @@ describe('KoreaderSettings', () => {
       .find((button) => button.text().includes('BookOrbit Title'))!
       .trigger('click')
 
-    expect(wrapper.text()).toContain('This KOReader copy is a different file from the one in BookOrbit.')
+    expect(wrapper.text()).toContain('This KOReader copy is a different file from the one in Book Reader Club.')
     expect(wrapper.text()).toContain('Highlights and bookmarks will not.')
   })
 
@@ -843,7 +843,7 @@ describe('KoreaderSettings', () => {
     expect(dialog.textContent).toContain('First Library Book')
     expect(dialog.textContent).toContain('Second Library Book')
     expect(dialog.textContent).not.toContain('Ambiguous Device Book')
-    expect(dialog.textContent).toContain('This KOReader copy is a different file from the one in BookOrbit.')
+    expect(dialog.textContent).toContain('This KOReader copy is a different file from the one in Book Reader Club.')
 
     const confirm = [...dialog.querySelectorAll('button')].find((button) => button.textContent?.includes('Link 2 books'))!
     confirm.click()
@@ -889,7 +889,7 @@ describe('KoreaderSettings', () => {
     const wrapper = mountComponent()
     await flushPromises()
 
-    const hint = "Different file from the one in BookOrbit: progress syncs as a percentage, and highlights and bookmarks don't sync."
+    const hint = "Different file from the one in Book Reader Club: progress syncs as a percentage, and highlights and bookmarks don't sync."
     expect(wrapper.text().split(hint)).toHaveLength(2)
   })
 
@@ -1083,7 +1083,7 @@ describe('KoreaderSettings', () => {
 
     expect(wrapper.text()).toContain('Unlink KOReader book?')
     expect(wrapper.text()).toContain('Future syncs will use an automatic match if one exists.')
-    expect(wrapper.text()).toContain('Already synced stats will stay on their current BookOrbit book.')
+    expect(wrapper.text()).toContain('Already synced stats will stay on their current Book Reader Club book.')
 
     const unlinkButtons = wrapper.findAll('button').filter((button) => button.text() === 'Unlink')
     await unlinkButtons[unlinkButtons.length - 1]!.trigger('click')
