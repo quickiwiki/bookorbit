@@ -1,4 +1,4 @@
-import { IsEmail, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import { IsEmail, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 
 import {
   DISPLAY_SAFE_TEXT_MESSAGE,
@@ -32,4 +32,9 @@ export class RegisterDto {
     message: 'Password must contain at least one uppercase letter, one lowercase letter, and one digit',
   })
   password: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(32)
+  inviteCode?: string;
 }

@@ -39,6 +39,8 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { SetupDto } from './dto/setup.dto';
+import { InviteLinkRepository } from './invite-link.repository';
+import { normalizeInviteCode } from './invite-code';
 import { MagicLinkRepository } from './magic-link.repository';
 import { AppSettingsService } from '../app-settings/app-settings.service';
 import { OidcProviderService } from '../app-settings/oidc-provider.service';
@@ -94,6 +96,7 @@ export class AuthService {
     private readonly sessions: AuthSessionService,
     private readonly sessionRepo: AuthSessionRepository,
     @Inject(DB) private readonly db: NodePgDatabase<typeof schema>,
+    private readonly inviteLinks: InviteLinkRepository,
   ) {}
 
   private async isRegistrationOpen(): Promise<boolean> {
@@ -102,14 +105,15 @@ export class AuthService {
 
   async register(dto: RegisterDto) {
     this.authenticationPolicy.assertPasswordLoginEnabled();
-    if (!(await this.isRegistrationOpen())) {
+    const inviteCode = dto.inviteCode ? normalizeInviteCode(dto.inviteCode) : null;
+    if (!inviteCode && !(await this.isRegistrationOpen())) {
       throw new ForbiddenException('Registration is not open');
     }
 
     const defaultLibraryIds = await this.appSettings.getDefaultLibraryAccessLibraryIds();
     const passwordHash = await hash(dto.password, 12);
     try {
-      return await this.registerInTransaction(dto, passwordHash, defaultLibraryIds);
+      return await this.registerInTransaction(dto, passwordHash, defaultLibraryIds, inviteCode);
     } catch (error) {
       // Two concurrent signups for the same identifier pass the pre-checks and collide on the
       // lower(username)/lower(email) unique indexes; report the loser as a conflict, not a 500.
@@ -118,8 +122,12 @@ export class AuthService {
     }
   }
 
-  private registerInTransaction(dto: RegisterDto, passwordHash: string, defaultLibraryIds: number[]) {
+  private registerInTransaction(dto: RegisterDto, passwordHash: string, defaultLibraryIds: number[], inviteCode: string | null) {
     return this.db.transaction(async (tx) => {
+      if (inviteCode && !(await this.inviteLinks.consume(tx, inviteCode))) {
+        throw new ForbiddenException('Invite link is not valid');
+      }
+
       const existingUsername = await tx.query.users.findFirst({
         where: eq(sql`lower(${schema.users.username})`, dto.username.toLowerCase()),
       });
@@ -150,7 +158,9 @@ export class AuthService {
           .onConflictDoNothing();
       }
 
-      this.logger.log(`[auth.register] [end] userId=${user.id} username="${sanitizeLogValue(user.username)}" - registration completed`);
+      this.logger.log(
+        `[auth.register] [end] userId=${user.id} username="${sanitizeLogValue(user.username)}" invited=${Boolean(inviteCode)} - registration completed`,
+      );
 
       this.auditEvents.emit(AUDIT_EVENT, {
         userId: user.id,

@@ -16,6 +16,8 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthenticatorService } from './authenticator.service';
 import { JwtStrategy } from './jwt.strategy';
+import { InviteLinkRepository } from './invite-link.repository';
+import { InviteLinkService } from './invite-link.service';
 import { MagicLinkRepository } from './magic-link.repository';
 import { MagicLinkService } from './magic-link.service';
 import { BackchannelLogoutService } from './oidc/backchannel-logout.service';
@@ -61,6 +63,8 @@ import { OidcTokenValidatorService } from './oidc/oidc-token-validator.service';
     JwtStrategy,
     MagicLinkRepository,
     MagicLinkService,
+    InviteLinkRepository,
+    InviteLinkService,
     OidcService,
     OidcStateService,
     OidcDiscoveryService,

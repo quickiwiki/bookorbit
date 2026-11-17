@@ -16,6 +16,7 @@ import { useSelfRegistration } from './composables/useSelfRegistration'
 import UserFormDrawer from './UserFormDrawer.vue'
 import ResetLinkModal from './ResetLinkModal.vue'
 import NewAccountDefaults from './components/NewAccountDefaults.vue'
+import InviteLinksPanel from './components/InviteLinksPanel.vue'
 import UserAttentionBand from './components/UserAttentionBand.vue'
 import UserRosterCards from './components/UserRosterCards.vue'
 import UserRosterTable from './components/UserRosterTable.vue'
@@ -520,6 +521,8 @@ async function saveDefaultLibraryAccess() {
       @toggle-library="toggleDefaultLibrary"
       @save-library-defaults="saveDefaultLibraryAccess"
     />
+
+    <InviteLinksPanel v-if="canManageUserDefaults && passwordLoginEnabled" />
 
     <UserFormDrawer
       v-if="drawerOpen"

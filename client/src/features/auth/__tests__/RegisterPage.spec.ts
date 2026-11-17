@@ -4,8 +4,14 @@ import { flushPromises, mount } from '@vue/test-utils'
 import RegisterPage from '../RegisterPage.vue'
 import { RegisterError } from '../composables/useAuth'
 
-const { registerMock } = vi.hoisted(() => ({
+const { registerMock, routeParams } = vi.hoisted(() => ({
   registerMock: vi.fn<(payload: Record<string, string>) => Promise<void>>(),
+  routeParams: {} as Record<string, string>,
+}))
+
+vi.mock('vue-router', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('vue-router')>()),
+  useRoute: () => ({ params: routeParams }),
 }))
 
 vi.mock('../composables/useAuth', async () => {
@@ -43,7 +49,41 @@ function alertText(wrapper: ReturnType<typeof mountPage>): string {
 
 beforeEach(() => {
   vi.clearAllMocks()
+  vi.unstubAllGlobals()
   registerMock.mockResolvedValue(undefined)
+  delete routeParams.code
+})
+
+describe('RegisterPage with an invite link', () => {
+  function stubStatus(valid: boolean) {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve({ valid }) })
+    vi.stubGlobal('fetch', fetchMock)
+    return fetchMock
+  }
+
+  it('sends the invite code with the account details', async () => {
+    routeParams.code = '4827-1930-5561'
+    const fetchMock = stubStatus(true)
+    const wrapper = mountPage()
+    await flushPromises()
+    expect(fetchMock).toHaveBeenCalledWith('/api/v1/auth/invites/4827-1930-5561/status')
+
+    await fillForm(wrapper)
+    await wrapper.find('form').trigger('submit')
+    await flushPromises()
+
+    expect(registerMock).toHaveBeenCalledWith(expect.objectContaining({ username: 'ada', inviteCode: '4827-1930-5561' }))
+  })
+
+  it('explains a dead invite link instead of showing the form', async () => {
+    routeParams.code = '0000-0000-0000'
+    stubStatus(false)
+    const wrapper = mountPage()
+    await flushPromises()
+
+    expect(wrapper.find('[data-testid="invite-invalid"]').exists()).toBe(true)
+    expect(wrapper.find('form').exists()).toBe(false)
+  })
 })
 
 describe('RegisterPage', () => {

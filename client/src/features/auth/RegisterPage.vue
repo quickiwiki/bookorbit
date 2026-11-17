@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { CircleAlert } from '@lucide/vue'
 import AuthAlert from './components/AuthAlert.vue'
@@ -8,9 +9,17 @@ import AuthPlate from './components/AuthPlate.vue'
 import AuthSubmit from './components/AuthSubmit.vue'
 import { RegisterError, useAuth } from './composables/useAuth'
 import { checkIdentityText } from './lib/identity-text'
+import { useInviteStatus } from './composables/useInviteStatus'
 
 const { t } = useI18n()
 const { register } = useAuth()
+const route = useRoute()
+const inviteCode = computed(() => (typeof route.params.code === 'string' ? route.params.code : null))
+const { status: inviteStatus, check: checkInvite } = useInviteStatus()
+
+onMounted(() => {
+  if (inviteCode.value) void checkInvite(inviteCode.value)
+})
 
 const username = ref('')
 const name = ref('')
@@ -23,7 +32,7 @@ const error = ref<string | null>(null)
 
 function resolveRegisterError(err: unknown): string {
   if (err instanceof RegisterError) {
-    if (err.status === 403) return t('auth.register.errors.closed')
+    if (err.status === 403) return inviteCode.value ? t('auth.register.errors.inviteInvalid') : t('auth.register.errors.closed')
     if (err.status === 409) return t('auth.register.errors.taken')
     if (err.status === 429) return t('auth.register.errors.tooManyAttempts')
     if (err.status === 400) return t('auth.register.errors.invalid')
@@ -58,6 +67,7 @@ async function handleSubmit() {
       name: name.value,
       email: email.value,
       password: password.value,
+      ...(inviteCode.value ? { inviteCode: inviteCode.value } : {}),
     })
   } catch (err) {
     error.value = resolveRegisterError(err)
@@ -68,8 +78,11 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <AuthPlate :heading="t('auth.register.title')" :description="t('auth.register.subtitle')" wide>
-    <form class="flex flex-col gap-[1.125rem]" @submit.prevent="handleSubmit">
+  <AuthPlate :heading="t('auth.register.title')" :description="inviteCode ? t('auth.register.invitedSubtitle') : t('auth.register.subtitle')" wide>
+    <AuthAlert v-if="inviteStatus === 'invalid'" :icon="CircleAlert" data-testid="invite-invalid">{{
+      t('auth.register.errors.inviteInvalid')
+    }}</AuthAlert>
+    <form v-else class="flex flex-col gap-[1.125rem]" @submit.prevent="handleSubmit">
       <AuthAlert v-if="error" :icon="CircleAlert">{{ error }}</AuthAlert>
       <div class="grid gap-[1.125rem] sm:grid-cols-2">
         <AuthField

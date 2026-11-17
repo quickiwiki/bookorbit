@@ -211,6 +211,28 @@ export const magicAccessTokens = pgTable(
 
 export type MagicAccessToken = typeof magicAccessTokens.$inferSelect;
 
+/** A sign-up link: whoever holds its code may register, even while self-registration is closed. */
+export const inviteLinks = pgTable(
+  'invite_links',
+  {
+    id: serial('id').primaryKey(),
+    code: varchar('code', { length: 32 }).notNull().unique(),
+    label: varchar('label', { length: 100 }).notNull().default(''),
+    maxUses: integer('max_uses'),
+    useCount: integer('use_count').notNull().default(0),
+    expiresAt: timestamp('expires_at', { withTimezone: true }),
+    createdBy: integer('created_by').references(() => users.id, { onDelete: 'set null' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    revokedAt: timestamp('revoked_at', { withTimezone: true }),
+  },
+  (t) => [
+    check('invite_links_use_count_nonneg_chk', sql`${t.useCount} >= 0`),
+    check('invite_links_max_uses_positive_chk', sql`${t.maxUses} is null or ${t.maxUses} > 0`),
+  ],
+);
+
+export type InviteLinkRow = typeof inviteLinks.$inferSelect;
+
 export const contentFilterTypeEnum = pgEnum('content_filter_type', ['include', 'exclude']);
 
 export const userContentFilterTags = pgTable(

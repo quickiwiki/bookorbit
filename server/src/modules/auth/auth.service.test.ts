@@ -104,6 +104,7 @@ function makeService(dbOverrides?: Record<string, unknown>) {
     countActiveByUserId: vi.fn().mockResolvedValue(0),
   };
   const oidcProviderService = { findEnabled: vi.fn().mockResolvedValue([]) };
+  const inviteLinks = { consume: vi.fn().mockResolvedValue(true) };
   const authenticationPolicy = {
     assertPasswordLoginEnabled: vi.fn(),
     isPasswordLoginEnabled: vi.fn().mockReturnValue(true),
@@ -121,6 +122,7 @@ function makeService(dbOverrides?: Record<string, unknown>) {
     sessions as never,
     sessionRepo as never,
     db,
+    inviteLinks as never,
   );
 
   return {
@@ -135,6 +137,7 @@ function makeService(dbOverrides?: Record<string, unknown>) {
     authenticationPolicy,
     sessions,
     sessionRepo,
+    inviteLinks,
   };
 }
 
@@ -334,6 +337,35 @@ describe('AuthService', () => {
       await expect(
         service.register({ username: 'newuser', name: 'N', password: 'P@ssw0rd!', email: 'existing@example.com' } as never),
       ).rejects.toThrow(ConflictException);
+    });
+
+    it('lets an invite code sign up while registration is closed', async () => {
+      const { service, db, appSettings, inviteLinks } = makeService();
+      appSettings.getValue.mockResolvedValue('false');
+      (db.query as never as Record<string, Record<string, vi.Mock>>).users.findFirst.mockResolvedValue(null);
+      ((db as unknown as Record<string, unknown>).returning as vi.Mock).mockResolvedValueOnce([{ id: 7, username: 'ana', name: 'Ana' }]);
+
+      const result = await service.register({
+        username: 'ana',
+        name: 'Ana',
+        password: 'P@ssw0rd!',
+        email: 'ana@example.com',
+        inviteCode: '4827-1930-5561',
+      } as never);
+
+      expect(result).toEqual({ id: 7, username: 'ana', name: 'Ana' });
+      expect(inviteLinks.consume).toHaveBeenCalledWith(db, '482719305561');
+    });
+
+    it('refuses an invite code that is used up, expired or revoked', async () => {
+      const { service, db, appSettings, inviteLinks } = makeService();
+      appSettings.getValue.mockResolvedValue('false');
+      inviteLinks.consume.mockResolvedValue(false);
+
+      await expect(
+        service.register({ username: 'ana', name: 'Ana', password: 'P@ssw0rd!', email: 'ana@example.com', inviteCode: '482719305561' } as never),
+      ).rejects.toThrow(ForbiddenException);
+      expect((db as unknown as { insert: vi.Mock }).insert).not.toHaveBeenCalled();
     });
 
     it('registers user successfully', async () => {

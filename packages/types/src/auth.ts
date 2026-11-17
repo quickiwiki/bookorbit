@@ -225,3 +225,19 @@ export interface MagicLinkTokenCreateResponse {
   label: string;
   expiresAt: string | null;
 }
+
+export interface InviteLink {
+  id: number;
+  code: string;
+  label: string;
+  maxUses: number | null;
+  useCount: number;
+  expiresAt: string | null;
+  createdAt: string;
+  revokedAt: string | null;
+  createdByUsername: string | null;
+}
+
+export interface InviteLinkStatus {
+  valid: boolean;
+}

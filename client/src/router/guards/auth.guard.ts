@@ -39,6 +39,12 @@ export function registerAuthGuard(router: Router): void {
       if (!loginOptions.value?.allowRegistration) return { path: '/login' }
     }
 
+    if (to.name === 'join') {
+      const { user } = useAuth()
+      if (user.value) return { path: '/' }
+      if (loginOptions.value?.passwordLoginEnabled !== true) return { path: '/login' }
+    }
+
     if (PASSWORD_ONLY_PUBLIC_PATHS.has(to.path) && loginOptions.value?.passwordLoginEnabled !== true) {
       return { path: '/login' }
     }

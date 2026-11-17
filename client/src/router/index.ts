@@ -783,6 +783,12 @@ export const routes: RouteRecordRaw[] = [
     meta: { public: true, title: () => t('titles.register') },
   },
   {
+    path: '/join/:code',
+    name: 'join',
+    component: () => import('@/features/auth/RegisterPage.vue'),
+    meta: { public: true, title: () => t('titles.register') },
+  },
+  {
     path: '/setup',
     name: 'setup',
     component: () => import('@/features/auth/SetupPage.vue'),

@@ -214,7 +214,7 @@ export function useAuth() {
     router.push('/')
   }
 
-  async function register(payload: { username: string; name: string; email: string; password: string }): Promise<void> {
+  async function register(payload: { username: string; name: string; email: string; password: string; inviteCode?: string }): Promise<void> {
     const res = await fetchWithAuthProxyRecovery('/api/v1/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

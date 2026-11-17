@@ -24,6 +24,7 @@ import { AllowApiKey, InteractiveOnly } from '../../common/decorators/api-key-po
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { Auditable } from '../../common/decorators/auditable.decorator';
 import { ForbidPermission } from '../../common/decorators/forbid-permission.decorator';
+import { RequirePermission } from '../../common/decorators/require-permission.decorator';
 import { Public } from '../../common/decorators/public.decorator';
 import type { RequestUser } from '../../common/types/request-user';
 import { AuthService } from './auth.service';
@@ -35,6 +36,8 @@ import { LogoutDto } from './dto/logout.dto';
 import { OidcCallbackDto } from './dto/oidc-callback.dto';
 import { OidcUnlinkDto } from './dto/oidc-unlink.dto';
 import { RegisterDto } from './dto/register.dto';
+import { CreateInviteLinkDto } from './dto/create-invite-link.dto';
+import { InviteLinkService } from './invite-link.service';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { SetupDto } from './dto/setup.dto';
 import { OidcService } from './oidc/oidc.service';
@@ -52,6 +55,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly oidcService: OidcService,
     private readonly magicLinkService: MagicLinkService,
+    private readonly inviteLinkService: InviteLinkService,
   ) {}
 
   @Public()
@@ -206,6 +210,33 @@ export class AuthController {
   @ForbidPermission(Permission.DemoRestricted, 'Demo-restricted account cannot edit account settings')
   oidcUnlinkIdentity(@CurrentUser() user: RequestUser, @Param('providerId', ParseIntPipe) providerId: number, @Body() dto: OidcUnlinkDto) {
     return this.oidcService.unlinkIdentity(user.id, providerId, dto.password, user.authenticationMethod);
+  }
+
+  @Get('invites')
+  @RequirePermission(Permission.ManageUsers)
+  listInviteLinks() {
+    return this.inviteLinkService.list();
+  }
+
+  @Post('invites')
+  @RequirePermission(Permission.ManageUsers)
+  @Throttle({ default: { limit: 10, ttl: ONE_MINUTE_MS } })
+  createInviteLink(@CurrentUser() user: RequestUser, @Body() dto: CreateInviteLinkDto) {
+    return this.inviteLinkService.create(user, dto);
+  }
+
+  @Delete('invites/:id')
+  @RequirePermission(Permission.ManageUsers)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  revokeInviteLink(@CurrentUser() user: RequestUser, @Param('id', ParseIntPipe) id: number) {
+    return this.inviteLinkService.revoke(user, id);
+  }
+
+  @Public()
+  @Throttle({ default: { limit: 10, ttl: ONE_MINUTE_MS } })
+  @Get('invites/:code/status')
+  inviteLinkStatus(@Param('code') code: string) {
+    return this.inviteLinkService.status(code);
   }
 
   @Post('magic-links')

@@ -5128,6 +5128,37 @@
         "appliesTo": "Applies to self-registration and OIDC",
         "startingLibraries": "Starting libraries",
         "startingLibrariesHint": "Viewer access granted automatically to every new account."
+      },
+      "invites": {
+        "title": "Invite links",
+        "hint": "Send someone a link so they can create their own account, even while self-registration is off. The new link is copied when you create it.",
+        "label": "Label",
+        "labelPlaceholder": "Who is it for? (optional)",
+        "maxUses": "How many people can use it",
+        "usesOption": "{count, plural, one {# use} other {# uses}}",
+        "usesOptionUnlimited": "Unlimited uses",
+        "expiry": "When it expires",
+        "expiryOption": "{count, plural, one {Expires in # day} other {Expires in # days}}",
+        "noExpiry": "Never expires",
+        "create": "Create link",
+        "copy": "Copy link",
+        "copied": "Copied",
+        "revoke": "Revoke link",
+        "empty": "No invite links yet.",
+        "uses": "Used {used} of {max}",
+        "usesUnlimited": "Used {used} times",
+        "expires": "Expires {date}",
+        "state": {
+          "active": "Active",
+          "revoked": "Revoked",
+          "expired": "Expired",
+          "usedUp": "Used up"
+        },
+        "errors": {
+          "load": "Failed to load invite links",
+          "create": "Failed to create the invite link",
+          "revoke": "Failed to revoke the invite link"
+        }
       }
     }
   },
@@ -6042,8 +6073,10 @@
         "name": {
           "unsafeCharacters": "Your name cannot contain hidden or text-direction characters.",
           "untrimmed": "Your name cannot start or end with a space."
-        }
-      }
+        },
+        "inviteInvalid": "This invite link is no longer valid. Ask for a new one."
+      },
+      "invitedSubtitle": "You have been invited. Choose a username and password to join."
     },
     "setup": {
       "title": "Initial setup",
